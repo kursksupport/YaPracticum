@@ -41,7 +41,7 @@ public class EventsController : ControllerBase
     {
         if (eventItem.EndAt <= eventItem.StartAt)
         {
-            return BadRequest("EndAt должна быть позже чем StartAt.");
+            return BadRequest("EndAt должна быть позже чем StartAt");
         }
 
         var createdEvent = _eventService.Create(eventItem);
@@ -50,5 +50,34 @@ public class EventsController : ControllerBase
             nameof(GetById),
             new { id = createdEvent.Id },
             createdEvent);
+    }
+    [HttpPut("{id}")]
+    public IActionResult Update(int id, Event updatedEvent)
+    {
+        if (updatedEvent.EndAt <= updatedEvent.StartAt)
+        {
+            return BadRequest("EndAt должна быть позже чем StartAt");
+        }
+
+        var updated = _eventService.Update(id, updatedEvent);
+
+        if (!updated)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id)
+    {
+        var deleted = _eventService.Delete(id);
+
+        if (!deleted)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
     }
 }

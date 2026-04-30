@@ -1,119 +1,12 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\\u0420\u043E\u043C\u0430\u043D\\source\\repos\\kursksupport\\YaPracticum\\EventManagementService\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{1712834F-33A5-4415-9703-0A12B18E1CD8}|EventManagementService\\EventManagementService.csproj|c:\\users\\\u0440\u043E\u043C\u0430\u043D\\source\\repos\\kursksupport\\yapracticum\\eventmanagementservice\\eventmanagementservice\\controllers\\eventscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1712834F-33A5-4415-9703-0A12B18E1CD8}|EventManagementService\\EventManagementService.csproj|solutionrelative:eventmanagementservice\\controllers\\eventscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1712834F-33A5-4415-9703-0A12B18E1CD8}|EventManagementService\\EventManagementService.csproj|c:\\users\\\u0440\u043E\u043C\u0430\u043D\\source\\repos\\kursksupport\\yapracticum\\eventmanagementservice\\eventmanagementservice\\models\\event.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1712834F-33A5-4415-9703-0A12B18E1CD8}|EventManagementService\\EventManagementService.csproj|solutionrelative:eventmanagementservice\\models\\event.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1712834F-33A5-4415-9703-0A12B18E1CD8}|EventManagementService\\EventManagementService.csproj|c:\\users\\\u0440\u043E\u043C\u0430\u043D\\source\\repos\\kursksupport\\yapracticum\\eventmanagementservice\\eventmanagementservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1712834F-33A5-4415-9703-0A12B18E1CD8}|EventManagementService\\EventManagementService.csproj|solutionrelative:eventmanagementservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1712834F-33A5-4415-9703-0A12B18E1CD8}|EventManagementService\\EventManagementService.csproj|c:\\users\\\u0440\u043E\u043C\u0430\u043D\\source\\repos\\kursksupport\\yapracticum\\eventmanagementservice\\eventmanagementservice\\services\\eventservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1712834F-33A5-4415-9703-0A12B18E1CD8}|EventManagementService\\EventManagementService.csproj|solutionrelative:eventmanagementservice\\services\\eventservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1712834F-33A5-4415-9703-0A12B18E1CD8}|EventManagementService\\EventManagementService.csproj|c:\\users\\\u0440\u043E\u043C\u0430\u043D\\source\\repos\\kursksupport\\yapracticum\\eventmanagementservice\\eventmanagementservice\\services\\ieventservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1712834F-33A5-4415-9703-0A12B18E1CD8}|EventManagementService\\EventManagementService.csproj|solutionrelative:eventmanagementservice\\services\\ieventservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1712834F-33A5-4415-9703-0A12B18E1CD8}|EventManagementService\\EventManagementService.csproj|c:\\users\\\u0440\u043E\u043C\u0430\u043D\\source\\repos\\kursksupport\\yapracticum\\eventmanagementservice\\eventmanagementservice\\eventmanagementservice.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{1712834F-33A5-4415-9703-0A12B18E1CD8}|EventManagementService\\EventManagementService.csproj|solutionrelative:eventmanagementservice\\eventmanagementservice.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 1,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": [
-        {
-          "DockedHeight": 333,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "EventsController.cs",
-              "DocumentMoniker": "C:\\Users\\\u0420\u043E\u043C\u0430\u043D\\source\\repos\\kursksupport\\YaPracticum\\EventManagementService\\EventManagementService\\Controllers\\EventsController.cs",
-              "RelativeDocumentMoniker": "EventManagementService\\Controllers\\EventsController.cs",
-              "ToolTip": "C:\\Users\\\u0420\u043E\u043C\u0430\u043D\\source\\repos\\kursksupport\\YaPracticum\\EventManagementService\\EventManagementService\\Controllers\\EventsController.cs",
-              "RelativeToolTip": "EventManagementService\\Controllers\\EventsController.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAowCEAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-29T10:57:23.06Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\\u0420\u043E\u043C\u0430\u043D\\source\\repos\\kursksupport\\YaPracticum\\EventManagementService\\EventManagementService\\Program.cs",
-              "RelativeDocumentMoniker": "EventManagementService\\Program.cs",
-              "ToolTip": "C:\\Users\\\u0420\u043E\u043C\u0430\u043D\\source\\repos\\kursksupport\\YaPracticum\\EventManagementService\\EventManagementService\\Program.cs",
-              "RelativeToolTip": "EventManagementService\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-29T07:55:09.86Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "EventService.cs",
-              "DocumentMoniker": "C:\\Users\\\u0420\u043E\u043C\u0430\u043D\\source\\repos\\kursksupport\\YaPracticum\\EventManagementService\\EventManagementService\\Services\\EventService.cs",
-              "RelativeDocumentMoniker": "EventManagementService\\Services\\EventService.cs",
-              "ToolTip": "C:\\Users\\\u0420\u043E\u043C\u0430\u043D\\source\\repos\\kursksupport\\YaPracticum\\EventManagementService\\EventManagementService\\Services\\EventService.cs",
-              "RelativeToolTip": "EventManagementService\\Services\\EventService.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAAwD4AAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-29T07:35:56.521Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "IEventService.cs",
-              "DocumentMoniker": "C:\\Users\\\u0420\u043E\u043C\u0430\u043D\\source\\repos\\kursksupport\\YaPracticum\\EventManagementService\\EventManagementService\\Services\\IEventService.cs",
-              "RelativeDocumentMoniker": "EventManagementService\\Services\\IEventService.cs",
-              "ToolTip": "C:\\Users\\\u0420\u043E\u043C\u0430\u043D\\source\\repos\\kursksupport\\YaPracticum\\EventManagementService\\EventManagementService\\Services\\IEventService.cs",
-              "RelativeToolTip": "EventManagementService\\Services\\IEventService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-29T07:31:56.806Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "EventManagementService.csproj",
-              "DocumentMoniker": "C:\\Users\\\u0420\u043E\u043C\u0430\u043D\\source\\repos\\kursksupport\\YaPracticum\\EventManagementService\\EventManagementService\\EventManagementService.csproj",
-              "RelativeDocumentMoniker": "EventManagementService\\EventManagementService.csproj",
-              "ToolTip": "C:\\Users\\\u0420\u043E\u043C\u0430\u043D\\source\\repos\\kursksupport\\YaPracticum\\EventManagementService\\EventManagementService\\EventManagementService.csproj",
-              "RelativeToolTip": "EventManagementService\\EventManagementService.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-04-29T07:31:20.28Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Event.cs",
-              "DocumentMoniker": "C:\\Users\\\u0420\u043E\u043C\u0430\u043D\\source\\repos\\kursksupport\\YaPracticum\\EventManagementService\\EventManagementService\\Models\\Event.cs",
-              "RelativeDocumentMoniker": "EventManagementService\\Models\\Event.cs",
-              "ToolTip": "C:\\Users\\\u0420\u043E\u043C\u0430\u043D\\source\\repos\\kursksupport\\YaPracticum\\EventManagementService\\EventManagementService\\Models\\Event.cs",
-              "RelativeToolTip": "EventManagementService\\Models\\Event.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-29T07:23:28.226Z",
-              "EditorCaption": ""
-            }
-          ]
-        }
-      ]
+      "DocumentGroups": []
     }
   ]
 }
