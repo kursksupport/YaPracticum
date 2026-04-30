@@ -7,12 +7,12 @@ C#
 ASP.NET Core Web API
 Swagger
 
-эндпоинты REST API:
-GET /events — получить список всех событий;
-GET /events/{id} — получить событие по id;
-POST /events — создать событие;
+эндпоинты REST API: 
+GET /events — получить список всех событий; 
+GET /events/{id} — получить событие по id; 
+POST /events — создать событие; 
 PUT /events/{id} — обновить событие целиком; 
-DELETE /events/{id} — удалить событие;
+DELETE /events/{id} — удалить событие; 
 
 Валидация
 обязательность поля Title;
