@@ -1,11 +1,10 @@
-# YaPracticum
-Запуск проекта производится из папки EventManagementService: 
-    cd EventManagementService
-    dotnet run
-Swagger доступен по адресу: https://localhost:<порт>/swagger
-
 Описание API
 Проект содержит REST API для работы с мероприятиями
+Используемые технологии:
+C#
+.NET 9
+ASP.NET Core Web API
+Swagger
 
 Эндпоинты:
 Получить список всех мероприятий
@@ -37,3 +36,13 @@ DELETE /events/{id}
 поле Title обязательно
 поля StartAt и EndAt обязательны
 EndAt должно быть позже StartAt
+
+
+Как запустить проект:
+Клонировать репозиторий
+  git clone https://github.com/kursksupport/YaPracticum
+Перейти в папку проекта
+Запустить проект
+  dotnet run
+После запуска в консоли появятся адреса приложения.
+Swagger доступен по адресу: https://localhost:<порт>/swagger
