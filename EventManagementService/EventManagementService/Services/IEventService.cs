@@ -1,10 +1,11 @@
-﻿using EventManagementService.Models;
+﻿using EventManagementService.DTOs;
+using EventManagementService.Models;
 
 namespace EventManagementService.Services
 {
     public interface IEventService
     {
-        List<Event> GetAll();
+        PaginatedResult GetAll(string? title, DateTime? from, DateTime? to, int page, int pageSize);
 
         Event? GetById(int id);
 
