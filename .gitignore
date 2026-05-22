@@ -2,3 +2,25 @@
 .vs/
 *.user
 *.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+bin/
+obj/
+[Bb]uild/
+[Dd]ebug/
+[Rr]elease/
+
+# .NET / test artifacts
+TestResults/
+*.trx
+*.coverage
+
+# NuGet
+packages/
+*.nupkg
+
+# Rider / other IDEs
+.idea/
+*.sln.iml
