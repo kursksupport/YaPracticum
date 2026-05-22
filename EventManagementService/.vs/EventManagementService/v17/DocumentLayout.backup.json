@@ -1,12 +1,54 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\\u0420\u043E\u043C\u0430\u043D\\Documents\\Projects\\YaPracticum\\EventManagementService\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{1712834F-33A5-4415-9703-0A12B18E1CD8}|EventManagementService\\EventManagementService.csproj|c:\\users\\\u0440\u043E\u043C\u0430\u043D\\documents\\projects\\yapracticum\\eventmanagementservice\\eventmanagementservice\\middleware\\exceptionhandlingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1712834F-33A5-4415-9703-0A12B18E1CD8}|EventManagementService\\EventManagementService.csproj|solutionrelative:eventmanagementservice\\middleware\\exceptionhandlingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1712834F-33A5-4415-9703-0A12B18E1CD8}|EventManagementService\\EventManagementService.csproj|c:\\users\\\u0440\u043E\u043C\u0430\u043D\\documents\\projects\\yapracticum\\eventmanagementservice\\eventmanagementservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1712834F-33A5-4415-9703-0A12B18E1CD8}|EventManagementService\\EventManagementService.csproj|solutionrelative:eventmanagementservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 1,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedHeight": 333,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\\u0420\u043E\u043C\u0430\u043D\\Documents\\Projects\\YaPracticum\\EventManagementService\\EventManagementService\\Program.cs",
+              "RelativeDocumentMoniker": "EventManagementService\\Program.cs",
+              "ToolTip": "C:\\Users\\\u0420\u043E\u043C\u0430\u043D\\Documents\\Projects\\YaPracticum\\EventManagementService\\EventManagementService\\Program.cs",
+              "RelativeToolTip": "EventManagementService\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-21T12:14:47.804Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ExceptionHandlingMiddleware.cs",
+              "DocumentMoniker": "C:\\Users\\\u0420\u043E\u043C\u0430\u043D\\Documents\\Projects\\YaPracticum\\EventManagementService\\EventManagementService\\Middleware\\ExceptionHandlingMiddleware.cs",
+              "RelativeDocumentMoniker": "EventManagementService\\Middleware\\ExceptionHandlingMiddleware.cs",
+              "ToolTip": "C:\\Users\\\u0420\u043E\u043C\u0430\u043D\\Documents\\Projects\\YaPracticum\\EventManagementService\\EventManagementService\\Middleware\\ExceptionHandlingMiddleware.cs",
+              "RelativeToolTip": "EventManagementService\\Middleware\\ExceptionHandlingMiddleware.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-21T12:12:35.602Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -1,3 +1,4 @@
+using EventManagementService.Middleware;
 using EventManagementService.Services;
 
 namespace EventManagementService
@@ -16,7 +17,7 @@ namespace EventManagementService
             builder.Services.AddSingleton<IEventService, EventService>();
 
             var app = builder.Build();
-
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
