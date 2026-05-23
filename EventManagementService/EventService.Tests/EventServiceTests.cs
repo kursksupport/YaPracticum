@@ -160,4 +160,109 @@ public class EventServiceTests
 
         Assert.Null(deletedEvent);
     }
+
+    [Fact]
+    public void Delete_Should_Return_False_When_Event_Not_Found()
+    {
+        //Подготовка
+        var service = new EventService();
+
+        //Выполнение
+        var result = service.Delete(222);
+
+        //Проверка результата
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void GetAll_Should_Filter_By_Title()
+    {
+        //Подготовка
+        var service = new EventService();
+
+        service.Create(new Event
+        {
+            Title = "Тест событие Фильтр",
+            Description = "Тестовое описание",
+            StartAt = DateTime.Now,
+            EndAt = DateTime.Now.AddHours(1)
+        });
+
+        service.Create(new Event
+        {
+            Title = "Событие 2",
+            Description = "Тестовое описание 2",
+            StartAt = DateTime.Now,
+            EndAt = DateTime.Now.AddHours(2)
+        });
+
+        //Выполнение
+        var result = service.GetAll("Тест", null, null, 1, 10);
+
+        //Проверка результата
+        Assert.Single(result.Items);
+
+        Assert.Equal("Тест событие Фильтр", result.Items[0].Title);
+    }
+
+    [Fact]
+    public void GetAll_Should_Filter_By_Date_Range()
+    {
+        //Подготовка
+        var service = new EventService();
+
+        service.Create(new Event
+        {
+            Title = "Первое событие",
+            StartAt = new DateTime(2026, 1, 1),
+            EndAt = new DateTime(2026, 1, 2)
+        });
+
+        service.Create(new Event
+        {
+            Title = "Второе событие",
+            StartAt = new DateTime(2026, 6, 1),
+            EndAt = new DateTime(2026, 6, 2)
+        });
+
+        //Выполнение
+        var result = service.GetAll(
+            null,
+            new DateTime(2026, 5, 1),
+            new DateTime(2026, 12, 31),
+            1,
+            10);
+
+        //Проверка результата
+        Assert.Single(result.Items);
+
+        Assert.Equal("Второе событие", result.Items[0].Title);
+    }
+
+    [Fact]
+    public void GetAll_Should_Return_Correct_Page()
+    {
+        //Подготовка
+        var service = new EventService();
+
+        for (int i = 1; i <= 15; i++)
+        {
+            service.Create(new Event
+            {
+                Title = $"Событие {i}",
+                StartAt = DateTime.Now,
+                EndAt = DateTime.Now.AddHours(1)
+            });
+        }
+
+        //Выполнение
+        var result = service.GetAll(null, null, null, 2, 5);
+
+        //Проверка результата
+        Assert.Equal(5, result.Items.Count);
+        Assert.Equal("Событие 6", result.Items[0].Title);
+        Assert.Equal(15, result.TotalCount);
+        Assert.Equal(2, result.Page);
+        Assert.Equal(5, result.PageSize);
+    }
 }
