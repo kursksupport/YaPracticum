@@ -5,6 +5,7 @@ namespace EventManagementService.Tests;
 
 public class EventServiceTests
 {
+    //создание события
     [Fact]
     public void Create_Should_Add_Event()
     {
@@ -34,6 +35,37 @@ public class EventServiceTests
         Assert.Single(allEvents.Items);
     }
 
+    //получение всех событий
+    [Fact]
+    public void GetAll_Should_Return_All_Events()
+    {
+        //Подготовка
+        var service = new EventService();
+
+        service.Create(new Event
+        {
+            Title = "Событие 1",
+            StartAt = DateTime.Now,
+            EndAt = DateTime.Now.AddHours(1)
+        });
+
+        service.Create(new Event
+        {
+            Title = "Событие 2",
+            StartAt = DateTime.Now,
+            EndAt = DateTime.Now.AddHours(2)
+        });
+
+        //Выполнение
+        var result = service.GetAll(null, null, null, 1, 10);
+
+        //Проверка результата
+        Assert.Equal(2, result.Items.Count);
+
+        Assert.Equal(2, result.TotalCount);
+    }
+
+    //получение события по ID
     [Fact]
     public void GetById_Should_Return_Event()
     {
@@ -61,6 +93,7 @@ public class EventServiceTests
         Assert.Equal("получение события по Id", result.Title);
     }
 
+    //попытка получить событие с несуществующим ID
     [Fact]
     public void GetById_Should_Return_Null_When_Event_Not_Found()
     {
@@ -74,6 +107,7 @@ public class EventServiceTests
         Assert.Null(result);
     }
 
+    //обновление существующего события
     [Fact]
     public void Update_Should_Modify_Existing_Event()
     {
@@ -113,6 +147,7 @@ public class EventServiceTests
         Assert.Equal("Новое описание", savedEvent.Description);
     }
 
+    //попытка обновить событие с несуществующим ID
     [Fact]
     public void Update_Should_Return_False_When_Event_Not_Found()
     {
@@ -134,6 +169,7 @@ public class EventServiceTests
         Assert.False(result);
     }
 
+    //удаление существующего события
     [Fact]
     public void Delete_Should_Remove_Existing_Event()
     {
@@ -174,6 +210,7 @@ public class EventServiceTests
         Assert.False(result);
     }
 
+    //фильтрация по названию
     [Fact]
     public void GetAll_Should_Filter_By_Title()
     {
@@ -205,6 +242,7 @@ public class EventServiceTests
         Assert.Equal("Тест событие Фильтр", result.Items[0].Title);
     }
 
+    //фильтрация по датам
     [Fact]
     public void GetAll_Should_Filter_By_Date_Range()
     {
@@ -239,6 +277,7 @@ public class EventServiceTests
         Assert.Equal("Второе событие", result.Items[0].Title);
     }
 
+    //пагинация событий
     [Fact]
     public void GetAll_Should_Return_Correct_Page()
     {
@@ -264,5 +303,47 @@ public class EventServiceTests
         Assert.Equal(15, result.TotalCount);
         Assert.Equal(2, result.Page);
         Assert.Equal(5, result.PageSize);
+    }
+
+    //комбинированная фильтрация
+    [Fact]
+    public void GetAll_Should_Apply_Combined_Filters()
+    {
+        //Подготовка
+        var service = new EventService();
+
+        service.Create(new Event
+        {
+            Title = "Тестовое событие 1",
+            StartAt = new DateTime(2026, 6, 1),
+            EndAt = new DateTime(2026, 6, 2)
+        });
+
+        service.Create(new Event
+        {
+            Title = "Тестовое событие 2",
+            StartAt = new DateTime(2025, 6, 1),
+            EndAt = new DateTime(2025, 6, 2)
+        });
+
+        service.Create(new Event
+        {
+            Title = "Событие",
+            StartAt = new DateTime(2026, 6, 1),
+            EndAt = new DateTime(2026, 6, 2)
+        });
+
+        //Выполнение
+        var result = service.GetAll(
+            "Тест",
+            new DateTime(2026, 1, 1),
+            new DateTime(2026, 12, 31),
+            1,
+            10);
+
+        //Проверка результата
+        Assert.Single(result.Items);
+
+        Assert.Equal("Тестовое событие 1", result.Items[0].Title);
     }
 }
