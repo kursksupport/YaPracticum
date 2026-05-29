@@ -1,4 +1,5 @@
-﻿using EventManagementService.Models;
+﻿using EventManagementService.DTOs;
+using EventManagementService.Models;
 using EventManagementService.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,11 +17,11 @@ public class EventsController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<List<Event>> GetAll()
+    public ActionResult<PaginatedResult> GetAll(string? title, DateTime? from, DateTime? to, int page = 1, int pageSize = 10)
     {
-        var events = _eventService.GetAll();
+        var result = _eventService.GetAll(title, from, to, page, pageSize);
 
-        return Ok(events);
+        return Ok(result);
     }
 
     [HttpGet("{id}")]

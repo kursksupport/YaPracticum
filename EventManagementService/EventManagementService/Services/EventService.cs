@@ -1,4 +1,5 @@
-﻿using EventManagementService.Models;
+﻿using EventManagementService.DTOs;
+using EventManagementService.Models;
 using System.Xml.Linq;
 
 namespace EventManagementService.Services
@@ -9,9 +10,40 @@ namespace EventManagementService.Services
 
         private int _nextId = 1;
 
-        public List<Event> GetAll()
+        public PaginatedResult GetAll(string? title, DateTime? from, DateTime? to, int page, int pageSize)
         {
-            return _events;
+            var query = _events.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                query = query.Where(e =>
+                    e.Title.Contains(title, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (from.HasValue)
+            {
+                query = query.Where(e => e.StartAt >= from.Value);
+            }
+
+            if (to.HasValue)
+            {
+                query = query.Where(e => e.EndAt <= to.Value);
+            }
+
+            var totalCount = query.Count();
+
+            var items = query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return new PaginatedResult
+            {
+                TotalCount = totalCount,
+                Items = items,
+                Page = page,
+                PageSize = pageSize
+            };
         }
 
         public Event? GetById(int id)
