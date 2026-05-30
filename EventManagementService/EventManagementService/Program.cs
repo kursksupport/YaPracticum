@@ -15,6 +15,7 @@ namespace EventManagementService
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddSingleton<IEventService, EventService>();
+            builder.Services.AddSingleton<IBookingService, BookingService>();
 
             var app = builder.Build();
             app.UseMiddleware<ExceptionHandlingMiddleware>();
