@@ -5,7 +5,6 @@ namespace EventManagementService.Tests;
 
 public class EventServiceTests
 {
-    //создание события
     [Fact]
     public void Create_Should_Add_Event()
     {
@@ -26,7 +25,7 @@ public class EventServiceTests
         //Проверка результата
         Assert.NotNull(createdEvent);
 
-        Assert.Equal(1, createdEvent.Id);
+        Assert.NotEqual(Guid.Empty, createdEvent.Id);
 
         Assert.Equal("Тест создания события", createdEvent.Title);
 
@@ -101,7 +100,7 @@ public class EventServiceTests
         var service = new EventService();
 
         //Выполнение
-        var result = service.GetById(123);
+        var result = service.GetById(Guid.NewGuid());
 
         //Проверка результата
         Assert.Null(result);
@@ -163,7 +162,7 @@ public class EventServiceTests
         };
 
         //Выполнение
-        var result = service.Update(111, updatedEvent);
+        var result = service.Update(Guid.NewGuid(), updatedEvent);
 
         //Проверка результата
         Assert.False(result);
@@ -204,7 +203,7 @@ public class EventServiceTests
         var service = new EventService();
 
         //Выполнение
-        var result = service.Delete(222);
+        var result = service.Delete(Guid.NewGuid());
 
         //Проверка результата
         Assert.False(result);

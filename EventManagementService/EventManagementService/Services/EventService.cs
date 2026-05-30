@@ -8,7 +8,6 @@ namespace EventManagementService.Services
     {
         private readonly List<Event> _events = new();
 
-        private int _nextId = 1;
 
         public PaginatedResult GetAll(string? title, DateTime? from, DateTime? to, int page, int pageSize)
         {
@@ -46,23 +45,21 @@ namespace EventManagementService.Services
             };
         }
 
-        public Event? GetById(int id)
+        public Event? GetById(Guid id)
         {
             return _events.FirstOrDefault(e => e.Id == id);
         }
 
         public Event Create(Event eventItem)
         {
-            eventItem.Id = _nextId;
-
-            _nextId++;
+            eventItem.Id = Guid.NewGuid();
 
             _events.Add(eventItem);
 
             return eventItem;
         }
 
-        public bool Update(int id, Event updatedEvent)
+        public bool Update(Guid id, Event updatedEvent)
         {
             var existingEvent = GetById(id);
 
@@ -79,7 +76,7 @@ namespace EventManagementService.Services
             return true;
         }
 
-        public bool Delete(int id)
+        public bool Delete(Guid id)
         {
             var eventItem = GetById(id);
 

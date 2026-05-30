@@ -25,7 +25,7 @@ public class EventsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public ActionResult<Event> GetById(int id)
+    public ActionResult<Event> GetById(Guid id)
     {
         var eventItem = _eventService.GetById(id);
 
@@ -53,7 +53,7 @@ public class EventsController : ControllerBase
             createdEvent);
     }
     [HttpPut("{id}")]
-    public IActionResult Update(int id, Event updatedEvent)
+    public IActionResult Update(Guid id, Event updatedEvent)
     {
         if (updatedEvent.EndAt <= updatedEvent.StartAt)
         {
@@ -70,7 +70,7 @@ public class EventsController : ControllerBase
         return NoContent();
     }
     [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public IActionResult Delete(Guid id)
     {
         var deleted = _eventService.Delete(id);
 
