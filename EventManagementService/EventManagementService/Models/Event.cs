@@ -1,20 +1,80 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EventManagementService.Models
+namespace EventManagementService.Models;
+public class Event
 {
-    public class Event
+    [Required]
+    public Guid Id { get; set; }
+
+    [Required]
+    public string Title { get; set; } = string.Empty;
+
+    public string? Description { get; set; }
+
+    [Required]
+    public DateTime StartAt { get; set; }
+
+    [Required]
+    public DateTime EndAt { get; set; }
+
+    [Required]
+    public int TotalSeats { get; private set; }
+
+    [Required]
+    public int AvailableSeats { get; private set; }
+
+    public static Event Create(
+        string title,
+        string? description,
+        DateTime startAt,
+        DateTime endAt,
+        int totalSeats)
     {
-        public Guid Id { get; set; }
+        if (totalSeats <= 0)
+        {
+            throw new ValidationException("totalSeats должно быть больше нуля");
+        }
 
-        [Required]
-        public string Title { get; set; } = string.Empty;
+        return new Event
+        {
+            Id = Guid.NewGuid(),
+            Title = title,
+            Description = description,
+            StartAt = startAt,
+            EndAt = endAt,
+            TotalSeats = totalSeats,
+            AvailableSeats = totalSeats
+        };
+    }
 
-        public string? Description { get; set; }
+    public bool TryReserveSeats(int count = 1)
+    {
+        if (count <= 0)
+        {
+            return false;
+        }
 
-        [Required]
-        public DateTime StartAt { get; set; }
+        if (AvailableSeats < count)
+        {
+            return false;
+        }
 
-        [Required]
-        public DateTime EndAt { get; set; }
+        AvailableSeats -= count;
+        return true;
+    }
+
+    public void ReleaseSeats(int count = 1)
+    {
+        if (count <= 0)
+        {
+            return;
+        }
+
+        AvailableSeats += count;
+
+        if (AvailableSeats > TotalSeats)
+        {
+            AvailableSeats = TotalSeats;
+        }
     }
 }
