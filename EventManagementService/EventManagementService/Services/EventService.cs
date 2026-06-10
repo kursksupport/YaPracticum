@@ -50,13 +50,27 @@ namespace EventManagementService.Services
             return _events.FirstOrDefault(e => e.Id == id);
         }
 
-        public Event Create(Event eventItem)
+        public EventInfoDto Create(CreateEventDto createEventDto)
         {
-            eventItem.Id = Guid.NewGuid();
+            var eventItem = Event.Create(
+                createEventDto.Title,
+                createEventDto.Description,
+                createEventDto.StartAt,
+                createEventDto.EndAt,
+                createEventDto.TotalSeats!.Value);
 
             _events.Add(eventItem);
 
-            return eventItem;
+            return new EventInfoDto
+            {
+                Id = eventItem.Id,
+                Title = eventItem.Title,
+                Description = eventItem.Description,
+                StartAt = eventItem.StartAt,
+                EndAt = eventItem.EndAt,
+                TotalSeats = eventItem.TotalSeats,
+                AvailableSeats = eventItem.AvailableSeats
+            };
         }
 
         public bool Update(Guid id, Event updatedEvent)

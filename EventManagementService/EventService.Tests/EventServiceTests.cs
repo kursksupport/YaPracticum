@@ -1,5 +1,6 @@
 ﻿using EventManagementService.Models;
 using EventManagementService.Services;
+using EventManagementService.DTOs;
 
 namespace EventManagementService.Tests;
 
@@ -11,7 +12,7 @@ public class EventServiceTests
         //Подготовка
         var service = new EventService();
 
-        var eventItem = new Event
+        var eventItem = new CreateEventDto
         {
             Title = "Тест создания события",
             Description = "Тестовое описание",
@@ -41,14 +42,14 @@ public class EventServiceTests
         //Подготовка
         var service = new EventService();
 
-        service.Create(new Event
+        service.Create(new CreateEventDto
         {
             Title = "Событие 1",
             StartAt = DateTime.Now,
             EndAt = DateTime.Now.AddHours(1)
         });
 
-        service.Create(new Event
+        service.Create(new CreateEventDto
         {
             Title = "Событие 2",
             StartAt = DateTime.Now,
@@ -71,7 +72,7 @@ public class EventServiceTests
         //Подготовка
         var service = new EventService();
 
-        var eventItem = new Event
+        var eventItem = new CreateEventDto
         {
             Title = "получение события по Id",
             Description = "Тестовое описание",
@@ -113,7 +114,7 @@ public class EventServiceTests
         //Подготовка
         var service = new EventService();
 
-        var eventItem = new Event
+        var eventItem = new CreateEventDto
         {
             Title = "Первоначальное значение",
             Description = "Первоначальное олписание",
@@ -175,7 +176,7 @@ public class EventServiceTests
         //Подготовка
         var service = new EventService();
 
-        var eventItem = new Event
+        var eventItem = new CreateEventDto
         {
             Title = "удаление существующего события",
             Description = "Тестовое описани",
@@ -216,7 +217,7 @@ public class EventServiceTests
         //Подготовка
         var service = new EventService();
 
-        service.Create(new Event
+        service.Create(new CreateEventDto
         {
             Title = "Тест событие Фильтр",
             Description = "Тестовое описание",
@@ -224,7 +225,7 @@ public class EventServiceTests
             EndAt = DateTime.Now.AddHours(1)
         });
 
-        service.Create(new Event
+        service.Create(new CreateEventDto
         {
             Title = "Событие 2",
             Description = "Тестовое описание 2",
@@ -248,14 +249,14 @@ public class EventServiceTests
         //Подготовка
         var service = new EventService();
 
-        service.Create(new Event
+        service.Create(new CreateEventDto
         {
             Title = "Первое событие",
             StartAt = new DateTime(2026, 1, 1),
             EndAt = new DateTime(2026, 1, 2)
         });
 
-        service.Create(new Event
+        service.Create(new CreateEventDto
         {
             Title = "Второе событие",
             StartAt = new DateTime(2026, 6, 1),
@@ -285,7 +286,7 @@ public class EventServiceTests
 
         for (int i = 1; i <= 15; i++)
         {
-            service.Create(new Event
+            service.Create(new CreateEventDto
             {
                 Title = $"Событие {i}",
                 StartAt = DateTime.Now,
@@ -311,21 +312,21 @@ public class EventServiceTests
         //Подготовка
         var service = new EventService();
 
-        service.Create(new Event
+        service.Create(new CreateEventDto
         {
             Title = "Тестовое событие 1",
             StartAt = new DateTime(2026, 6, 1),
             EndAt = new DateTime(2026, 6, 2)
         });
 
-        service.Create(new Event
+        service.Create(new CreateEventDto
         {
             Title = "Тестовое событие 2",
             StartAt = new DateTime(2025, 6, 1),
             EndAt = new DateTime(2025, 6, 2)
         });
 
-        service.Create(new Event
+        service.Create(new CreateEventDto
         {
             Title = "Событие",
             StartAt = new DateTime(2026, 6, 1),

@@ -1,4 +1,5 @@
-﻿using EventManagementService.Models;
+﻿using EventManagementService.DTOs;
+using EventManagementService.Models;
 using EventManagementService.Services;
 
 namespace EventManagementService.Tests;
@@ -13,7 +14,7 @@ public class BookingServiceTests
         var eventService = new EventService();
         var bookingService = new BookingService(eventService);
 
-        var eventItem = new Event
+        var eventItem = new CreateEventDto
         {
             Title = "Тестовое событие",
             Description = "Описание",
@@ -41,7 +42,7 @@ public class BookingServiceTests
         var eventService = new EventService();
         var bookingService = new BookingService(eventService);
 
-        var eventItem = new Event
+        var eventItem = new CreateEventDto
         {
             Title = "Тестовое событие",
             Description = "Описание",
@@ -70,7 +71,7 @@ public class BookingServiceTests
         var eventService = new EventService();
         var bookingService = new BookingService(eventService);
 
-        var eventItem = new Event
+        var eventItem = new CreateEventDto
         {
             Title = "Тестовое событие",
             Description = "Описание",
@@ -131,7 +132,7 @@ public class BookingServiceTests
         var eventService = new EventService();
         var bookingService = new BookingService(eventService);
 
-        var eventItem = new Event
+        var eventItem = new CreateEventDto
         {
             Title = "Тестовое событие",
             Description = "Описание",

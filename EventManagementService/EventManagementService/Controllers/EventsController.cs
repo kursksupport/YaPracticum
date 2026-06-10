@@ -38,20 +38,21 @@ public class EventsController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult<Event> Create(Event eventItem)
+    public ActionResult<EventInfoDto> Create(CreateEventDto createEventDto)
     {
-        if (eventItem.EndAt <= eventItem.StartAt)
+        if (createEventDto.EndAt <= createEventDto.StartAt)
         {
             return BadRequest("EndAt должна быть позже чем StartAt");
         }
 
-        var createdEvent = _eventService.Create(eventItem);
+        var createdEvent = _eventService.Create(createEventDto);
 
         return CreatedAtAction(
             nameof(GetById),
             new { id = createdEvent.Id },
             createdEvent);
     }
+
     [HttpPut("{id}")]
     public IActionResult Update(Guid id, Event updatedEvent)
     {
