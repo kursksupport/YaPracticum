@@ -7,12 +7,12 @@ namespace EventManagementService.Services
     {
         PaginatedResult GetAll(string? title, DateTime? from, DateTime? to, int page, int pageSize);
 
-        Event? GetById(int id);
+        public Event? GetById(Guid id);
 
         Event Create(Event eventItem);
 
-        bool Update(int id, Event updatedEvent);
+        public bool Update(Guid id, Event updatedEvent);
 
-        bool Delete(int id);
+        public bool Delete(Guid id);
     }
 }
