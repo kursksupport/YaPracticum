@@ -77,4 +77,24 @@ public class Event
             AvailableSeats = TotalSeats;
         }
     }
+
+    public void UpdateSeats(int totalSeats)
+    {
+        if (totalSeats <= 0)
+        {
+            throw new ValidationException(
+                "TotalSeats должно быть больше нуля");
+        }
+
+        var reservedSeats = TotalSeats - AvailableSeats;
+
+        if (totalSeats < reservedSeats)
+        {
+            throw new ValidationException(
+                "Количество мест не может быть меньше зарезервированных");
+        }
+
+        TotalSeats = totalSeats;
+        AvailableSeats = totalSeats - reservedSeats;
+    }
 }

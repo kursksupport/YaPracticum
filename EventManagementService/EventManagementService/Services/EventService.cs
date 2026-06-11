@@ -87,6 +87,11 @@ namespace EventManagementService.Services
             existingEvent.StartAt = updatedEvent.StartAt;
             existingEvent.EndAt = updatedEvent.EndAt;
 
+            if (updatedEvent.TotalSeats > 0)
+            {
+                existingEvent.UpdateSeats(updatedEvent.TotalSeats);
+            }
+
             return true;
         }
 

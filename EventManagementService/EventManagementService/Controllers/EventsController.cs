@@ -25,7 +25,7 @@ public class EventsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public ActionResult<Event> GetById(Guid id)
+    public ActionResult<EventInfoDto> GetById(Guid id)
     {
         var eventItem = _eventService.GetById(id);
 
@@ -34,7 +34,16 @@ public class EventsController : ControllerBase
             return NotFound();
         }
 
-        return Ok(eventItem);
+        return Ok(new EventInfoDto
+        {
+            Id = eventItem.Id,
+            Title = eventItem.Title,
+            Description = eventItem.Description,
+            StartAt = eventItem.StartAt,
+            EndAt = eventItem.EndAt,
+            TotalSeats = eventItem.TotalSeats,
+            AvailableSeats = eventItem.AvailableSeats
+        });
     }
 
     [HttpPost]
