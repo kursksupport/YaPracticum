@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using EventManagementService.Exceptions;
 
 namespace EventManagementService.Middleware;
 
@@ -33,9 +34,17 @@ public class ExceptionHandlingMiddleware
     {
         var (statusCode, title) = ex switch
         {
-            ArgumentException => (StatusCodes.Status400BadRequest, "Bad Request"),
-            KeyNotFoundException => (StatusCodes.Status404NotFound, "Not Found"),
-            _ => (StatusCodes.Status500InternalServerError, "Internal Server Error")
+            ArgumentException =>
+                (StatusCodes.Status400BadRequest, "Bad Request"),
+
+            KeyNotFoundException =>
+                (StatusCodes.Status404NotFound, "Not Found"),
+
+            NoAvailableSeatsException =>
+                (StatusCodes.Status409Conflict, "Conflict"),
+
+            _ =>
+                (StatusCodes.Status500InternalServerError, "Internal Server Error")
         };
 
         var problemDetails = new ProblemDetails
