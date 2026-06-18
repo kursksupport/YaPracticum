@@ -17,7 +17,8 @@ public class EventServiceTests
             Title = "Тест создания события",
             Description = "Тестовое описание",
             StartAt = DateTime.Now,
-            EndAt = DateTime.Now.AddHours(1)
+            EndAt = DateTime.Now.AddHours(1),
+            TotalSeats = 10
         };
 
         //Выполнение
@@ -46,14 +47,16 @@ public class EventServiceTests
         {
             Title = "Событие 1",
             StartAt = DateTime.Now,
-            EndAt = DateTime.Now.AddHours(1)
+            EndAt = DateTime.Now.AddHours(1),
+            TotalSeats = 10
         });
 
         service.Create(new CreateEventDto
         {
             Title = "Событие 2",
             StartAt = DateTime.Now,
-            EndAt = DateTime.Now.AddHours(2)
+            EndAt = DateTime.Now.AddHours(2),
+            TotalSeats = 10
         });
 
         //Выполнение
@@ -77,7 +80,8 @@ public class EventServiceTests
             Title = "получение события по Id",
             Description = "Тестовое описание",
             StartAt = DateTime.Now,
-            EndAt = DateTime.Now.AddHours(2)
+            EndAt = DateTime.Now.AddHours(2),
+            TotalSeats = 10
         };
 
         var createdEvent = service.Create(eventItem);
@@ -119,7 +123,8 @@ public class EventServiceTests
             Title = "Первоначальное значение",
             Description = "Первоначальное олписание",
             StartAt = DateTime.Now,
-            EndAt = DateTime.Now.AddHours(1)
+            EndAt = DateTime.Now.AddHours(1),
+            TotalSeats = 10
         };
 
         var createdEvent = service.Create(eventItem);
@@ -181,7 +186,8 @@ public class EventServiceTests
             Title = "удаление существующего события",
             Description = "Тестовое описани",
             StartAt = DateTime.Now,
-            EndAt = DateTime.Now.AddHours(1)
+            EndAt = DateTime.Now.AddHours(1),
+            TotalSeats = 10
         };
 
         var createdEvent = service.Create(eventItem);
@@ -222,7 +228,8 @@ public class EventServiceTests
             Title = "Тест событие Фильтр",
             Description = "Тестовое описание",
             StartAt = DateTime.Now,
-            EndAt = DateTime.Now.AddHours(1)
+            EndAt = DateTime.Now.AddHours(1),
+            TotalSeats = 10
         });
 
         service.Create(new CreateEventDto
@@ -230,7 +237,8 @@ public class EventServiceTests
             Title = "Событие 2",
             Description = "Тестовое описание 2",
             StartAt = DateTime.Now,
-            EndAt = DateTime.Now.AddHours(2)
+            EndAt = DateTime.Now.AddHours(2),
+            TotalSeats = 10
         });
 
         //Выполнение
@@ -253,14 +261,16 @@ public class EventServiceTests
         {
             Title = "Первое событие",
             StartAt = new DateTime(2026, 1, 1),
-            EndAt = new DateTime(2026, 1, 2)
+            EndAt = new DateTime(2026, 1, 2),
+            TotalSeats = 10
         });
 
         service.Create(new CreateEventDto
         {
             Title = "Второе событие",
             StartAt = new DateTime(2026, 6, 1),
-            EndAt = new DateTime(2026, 6, 2)
+            EndAt = new DateTime(2026, 6, 2),
+            TotalSeats = 10
         });
 
         //Выполнение
@@ -290,7 +300,8 @@ public class EventServiceTests
             {
                 Title = $"Событие {i}",
                 StartAt = DateTime.Now,
-                EndAt = DateTime.Now.AddHours(1)
+                EndAt = DateTime.Now.AddHours(1),
+                TotalSeats = 10
             });
         }
 
@@ -316,21 +327,24 @@ public class EventServiceTests
         {
             Title = "Тестовое событие 1",
             StartAt = new DateTime(2026, 6, 1),
-            EndAt = new DateTime(2026, 6, 2)
+            EndAt = new DateTime(2026, 6, 2),
+            TotalSeats = 10
         });
 
         service.Create(new CreateEventDto
         {
             Title = "Тестовое событие 2",
             StartAt = new DateTime(2025, 6, 1),
-            EndAt = new DateTime(2025, 6, 2)
+            EndAt = new DateTime(2025, 6, 2),
+            TotalSeats = 10
         });
 
         service.Create(new CreateEventDto
         {
             Title = "Событие",
             StartAt = new DateTime(2026, 6, 1),
-            EndAt = new DateTime(2026, 6, 2)
+            EndAt = new DateTime(2026, 6, 2),
+            TotalSeats = 10
         });
 
         //Выполнение

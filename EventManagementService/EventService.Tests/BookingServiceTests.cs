@@ -274,6 +274,228 @@ public class BookingServiceTests
             booking.ProcessedAt);
     }
 
+    //Переход брони в Rejected
+    [Fact]
+    public void Reject_Should_Set_Status_And_ProcessedAt()
+    {
+        //Подготовка
+        var booking = new Booking
+        {
+            Id = Guid.NewGuid(),
+            EventId = Guid.NewGuid(),
+            Status = BookingStatus.Pending,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        //Выполнение
+        booking.Reject();
+
+        //Проверка результата
+        Assert.Equal(
+            BookingStatus.Rejected,
+            booking.Status);
+
+        Assert.NotNull(
+            booking.ProcessedAt);
+    }
+
+    //После Reject освобождается место
+    [Fact]
+    public async Task Reject_And_ReleaseSeats_Should_Restore_AvailableSeats()
+    {
+        //Подготовка
+        var eventService = new EventService();
+
+        var bookingService =
+            new BookingService(eventService);
+
+        var createdEvent =
+            eventService.Create(
+                CreateTestEvent(1));
+
+        var booking =
+            await bookingService.CreateBookingAsync(
+                createdEvent.Id);
+
+        var eventItem =
+            eventService.GetById(
+                createdEvent.Id);
+
+        Assert.NotNull(
+            eventItem);
+
+        //Выполнение
+        booking.Reject();
+
+        eventItem!.ReleaseSeats();
+
+        //Проверка результата
+        Assert.Equal(
+            BookingStatus.Rejected,
+            booking.Status);
+
+        Assert.Equal(
+            1,
+            eventItem.AvailableSeats);
+    }
+
+    //После освобождения места можно снова забронировать
+    [Fact]
+    public async Task Reject_And_ReleaseSeats_Should_Allow_New_Booking()
+    {
+        //Подготовка
+        var eventService = new EventService();
+
+        var bookingService =
+            new BookingService(eventService);
+
+        var createdEvent =
+            eventService.Create(
+                CreateTestEvent(1));
+
+        var firstBooking =
+            await bookingService.CreateBookingAsync(
+                createdEvent.Id);
+
+        var eventItem =
+            eventService.GetById(
+                createdEvent.Id);
+
+        Assert.NotNull(
+            eventItem);
+
+        firstBooking.Reject();
+
+        eventItem!.ReleaseSeats();
+
+        //Выполнение
+        var secondBooking =
+            await bookingService.CreateBookingAsync(
+                createdEvent.Id);
+
+        //Проверка результата
+        Assert.NotNull(
+            secondBooking);
+
+        Assert.NotEqual(
+            firstBooking.Id,
+            secondBooking.Id);
+
+        Assert.Equal(
+            BookingStatus.Pending,
+            secondBooking.Status);
+
+        Assert.Equal(
+            0,
+            eventItem.AvailableSeats);
+    }
+
+    //Защита от овербукинга
+    [Fact]
+    public async Task ConcurrentBookings_Should_Not_Allow_Overbooking()
+    {
+        //Подготовка
+        var eventService = new EventService();
+
+        var bookingService =
+            new BookingService(eventService);
+
+        var createdEvent =
+            eventService.Create(
+                CreateTestEvent(5));
+
+        var tasks =
+            Enumerable
+                .Range(0, 20)
+                .Select(async _ =>
+                {
+                    try
+                    {
+                        await bookingService
+                            .CreateBookingAsync(
+                                createdEvent.Id);
+
+                        return true;
+                    }
+                    catch (NoAvailableSeatsException)
+                    {
+                        return false;
+                    }
+                });
+
+        //Выполнение
+        var results =
+            await Task.WhenAll(tasks);
+
+        var eventAfter =
+            eventService.GetById(
+                createdEvent.Id);
+
+        //Проверка результата
+        Assert.Equal(
+            5,
+            results.Count(r => r));
+
+        Assert.Equal(
+            15,
+            results.Count(r => !r));
+
+        Assert.NotNull(
+            eventAfter);
+
+        Assert.Equal(
+            0,
+            eventAfter!.AvailableSeats);
+    }
+
+    //Уникальность Id при конкурентных запросах
+    [Fact]
+    public async Task ConcurrentBookings_Should_Create_Unique_Ids()
+    {
+        //Подготовка
+        var eventService = new EventService();
+
+        var bookingService =
+            new BookingService(eventService);
+
+        var createdEvent =
+            eventService.Create(
+                CreateTestEvent(10));
+
+        var tasks =
+            Enumerable
+                .Range(0, 10)
+                .Select(_ =>
+                    bookingService
+                        .CreateBookingAsync(
+                            createdEvent.Id));
+
+        //Выполнение
+        var bookings =
+            await Task.WhenAll(tasks);
+
+        var uniqueIds =
+            bookings
+                .Select(b => b.Id)
+                .Distinct()
+                .Count();
+
+        //Проверка результата
+        Assert.Equal(
+            10,
+            bookings.Length);
+
+        Assert.Equal(
+            10,
+            uniqueIds);
+
+        Assert.All(
+            bookings,
+            b => Assert.NotEqual(
+                Guid.Empty,
+                b.Id));
+    }
+
 
     private static CreateEventDto CreateTestEvent(int totalSeats = 10)
     {
