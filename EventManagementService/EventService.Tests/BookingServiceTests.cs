@@ -1,4 +1,5 @@
 ﻿using EventManagementService.DTOs;
+using EventManagementService.Exceptions;
 using EventManagementService.Models;
 using EventManagementService.Services;
 
@@ -14,13 +15,7 @@ public class BookingServiceTests
         var eventService = new EventService();
         var bookingService = new BookingService(eventService);
 
-        var eventItem = new CreateEventDto
-        {
-            Title = "Тестовое событие",
-            Description = "Описание",
-            StartAt = DateTime.UtcNow.AddHours(1),
-            EndAt = DateTime.UtcNow.AddHours(2)
-        };
+        var eventItem = CreateTestEvent();
 
         var createdEvent = eventService.Create(eventItem);
 
@@ -42,13 +37,7 @@ public class BookingServiceTests
         var eventService = new EventService();
         var bookingService = new BookingService(eventService);
 
-        var eventItem = new CreateEventDto
-        {
-            Title = "Тестовое событие",
-            Description = "Описание",
-            StartAt = DateTime.UtcNow.AddHours(1),
-            EndAt = DateTime.UtcNow.AddHours(2)
-        };
+        var eventItem = CreateTestEvent();
 
         var createdEvent = eventService.Create(eventItem);
 
@@ -71,13 +60,7 @@ public class BookingServiceTests
         var eventService = new EventService();
         var bookingService = new BookingService(eventService);
 
-        var eventItem = new CreateEventDto
-        {
-            Title = "Тестовое событие",
-            Description = "Описание",
-            StartAt = DateTime.UtcNow.AddHours(1),
-            EndAt = DateTime.UtcNow.AddHours(2)
-        };
+        var eventItem = CreateTestEvent();
 
         var createdEvent = eventService.Create(eventItem);
 
@@ -132,13 +115,7 @@ public class BookingServiceTests
         var eventService = new EventService();
         var bookingService = new BookingService(eventService);
 
-        var eventItem = new CreateEventDto
-        {
-            Title = "Тестовое событие",
-            Description = "Описание",
-            StartAt = DateTime.UtcNow.AddHours(1),
-            EndAt = DateTime.UtcNow.AddHours(2)
-        };
+        var eventItem = CreateTestEvent();
 
         var createdEvent = eventService.Create(eventItem);
 
@@ -150,5 +127,163 @@ public class BookingServiceTests
 
         //Проверка результата
         Assert.Equal("Событие не найдено", exception.Message);
+    }
+
+    //Создание брони уменьшает AvailableSeats на 1
+    //Создание брони уменьшает AvailableSeats на 1
+    [Fact]
+    public async Task CreateBooking_Should_Decrease_AvailableSeats()
+    {
+        //Подготовка
+        var eventService = new EventService();
+        var bookingService = new BookingService(eventService);
+
+        var createdEvent =
+            eventService.Create(CreateTestEvent(5));
+
+        var seatsBefore =
+            eventService.GetById(createdEvent.Id)!
+            .AvailableSeats;
+
+        //Выполнение
+        await bookingService.CreateBookingAsync(
+            createdEvent.Id);
+
+        var seatsAfter =
+            eventService.GetById(createdEvent.Id)!
+            .AvailableSeats;
+
+        //Проверка результата
+        Assert.Equal(
+            seatsBefore - 1,
+            seatsAfter);
+
+        Assert.Equal(4, seatsAfter);
+    }
+
+    //Создание нескольких броней до лимита
+    [Fact]
+    public async Task CreateMultipleBookings_Until_SeatLimit_Should_Succeed()
+    {
+        //Подготовка
+        var eventService = new EventService();
+
+        var bookingService =
+            new BookingService(eventService);
+
+        var createdEvent =
+            eventService.Create(
+                CreateTestEvent(3));
+
+        //Выполнение
+        var booking1 =
+            await bookingService.CreateBookingAsync(
+                createdEvent.Id);
+
+        var booking2 =
+            await bookingService.CreateBookingAsync(
+                createdEvent.Id);
+
+        var booking3 =
+            await bookingService.CreateBookingAsync(
+                createdEvent.Id);
+
+        var eventAfter =
+            eventService.GetById(
+                createdEvent.Id);
+
+        //Проверка результата
+        Assert.NotEqual(
+            booking1.Id,
+            booking2.Id);
+
+        Assert.NotEqual(
+            booking1.Id,
+            booking3.Id);
+
+        Assert.NotEqual(
+            booking2.Id,
+            booking3.Id);
+
+        Assert.NotNull(eventAfter);
+
+        Assert.Equal(
+            0,
+            eventAfter!.AvailableSeats);
+    }
+
+    //После исчерпания мест следующая бронь невозможна
+    [Fact]
+    public async Task CreateBooking_Should_Throw_When_No_Seats_Left()
+    {
+        //Подготовка
+        var eventService = new EventService();
+
+        var bookingService =
+            new BookingService(eventService);
+
+        var createdEvent =
+            eventService.Create(
+                CreateTestEvent(1));
+
+        await bookingService.CreateBookingAsync(
+            createdEvent.Id);
+
+        //Выполнение
+        var action = async () =>
+            await bookingService.CreateBookingAsync(
+                createdEvent.Id);
+
+        //Проверка результата
+        await Assert.ThrowsAsync<
+            NoAvailableSeatsException>(
+            action);
+
+        var eventAfter =
+            eventService.GetById(
+                createdEvent.Id);
+
+        Assert.NotNull(eventAfter);
+
+        Assert.Equal(
+            0,
+            eventAfter!.AvailableSeats);
+    }
+    //Переход брони в Confirmed
+    [Fact]
+    public void Confirm_Should_Set_Status_And_ProcessedAt()
+    {
+        //Подготовка
+        var booking = new Booking
+        {
+            Id = Guid.NewGuid(),
+            EventId = Guid.NewGuid(),
+            Status = BookingStatus.Pending,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        //Выполнение
+        booking.Confirm();
+
+        //Проверка результата
+        Assert.Equal(
+            BookingStatus.Confirmed,
+            booking.Status);
+
+        Assert.NotNull(
+            booking.ProcessedAt);
+    }
+
+
+    private static CreateEventDto CreateTestEvent(int totalSeats = 10)
+    {
+        return new CreateEventDto
+        {
+            Title = "Тестовое событие",
+            Description = "Описание",
+            StartAt = DateTime.UtcNow.AddHours(1),
+            EndAt = DateTime.UtcNow.AddHours(2),
+            TotalSeats = totalSeats
+        };
     }
 }
