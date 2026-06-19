@@ -68,7 +68,7 @@ public class BookingService : IBookingService
 
         if (existingBooking == null)
         {
-            throw new KeyNotFoundException("Бронирование не нейдено");
+            throw new KeyNotFoundException("Бронирование не найдено");
         }
 
         existingBooking.Status = booking.Status;

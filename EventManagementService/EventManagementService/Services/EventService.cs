@@ -1,6 +1,5 @@
 ﻿using EventManagementService.DTOs;
 using EventManagementService.Models;
-using System.Xml.Linq;
 
 namespace EventManagementService.Services
 {
