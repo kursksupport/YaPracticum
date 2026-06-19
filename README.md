@@ -123,4 +123,5 @@ Swagger доступен по адресу: https://localhost:<порт>/swagger
   Возможные HTTP-статусы:
   400 Bad Request
   404 Not Found
+  409 Conflict
   500 Internal Server Error
