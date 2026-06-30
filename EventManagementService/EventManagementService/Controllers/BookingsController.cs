@@ -14,6 +14,7 @@ public class BookingsController : ControllerBase
     }
 
     [HttpPost("events/{id:guid}/book")]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CreateBooking(Guid id)
     {
         try

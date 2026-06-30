@@ -25,7 +25,7 @@ public class EventsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public ActionResult<Event> GetById(Guid id)
+    public ActionResult<EventInfoDto> GetById(Guid id)
     {
         var eventItem = _eventService.GetById(id);
 
@@ -34,24 +34,34 @@ public class EventsController : ControllerBase
             return NotFound();
         }
 
-        return Ok(eventItem);
+        return Ok(new EventInfoDto
+        {
+            Id = eventItem.Id,
+            Title = eventItem.Title,
+            Description = eventItem.Description,
+            StartAt = eventItem.StartAt,
+            EndAt = eventItem.EndAt,
+            TotalSeats = eventItem.TotalSeats,
+            AvailableSeats = eventItem.AvailableSeats
+        });
     }
 
     [HttpPost]
-    public ActionResult<Event> Create(Event eventItem)
+    public ActionResult<EventInfoDto> Create(CreateEventDto createEventDto)
     {
-        if (eventItem.EndAt <= eventItem.StartAt)
+        if (createEventDto.EndAt <= createEventDto.StartAt)
         {
             return BadRequest("EndAt должна быть позже чем StartAt");
         }
 
-        var createdEvent = _eventService.Create(eventItem);
+        var createdEvent = _eventService.Create(createEventDto);
 
         return CreatedAtAction(
             nameof(GetById),
             new { id = createdEvent.Id },
             createdEvent);
     }
+
     [HttpPut("{id}")]
     public IActionResult Update(Guid id, Event updatedEvent)
     {

@@ -9,7 +9,7 @@ namespace EventManagementService.Services
 
         public Event? GetById(Guid id);
 
-        Event Create(Event eventItem);
+        EventInfoDto Create(CreateEventDto createEventDto);
 
         public bool Update(Guid id, Event updatedEvent);
 

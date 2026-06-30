@@ -1,4 +1,5 @@
-﻿using EventManagementService.Models;
+﻿using EventManagementService.Exceptions;
+using EventManagementService.Models;
 
 namespace EventManagementService.Services;
 
@@ -6,6 +7,7 @@ public class BookingService : IBookingService
 {
     private readonly List<Booking> _bookings = new();
     private readonly IEventService _eventService;
+    private readonly object _bookingLock = new();
 
     public BookingService(IEventService eventService)
     {
@@ -14,25 +16,35 @@ public class BookingService : IBookingService
 
     public Task<Booking> CreateBookingAsync(Guid eventId)
     {
-        var eventItem = _eventService.GetById(eventId);
-
-        if (eventItem == null)
+        lock (_bookingLock)
         {
-            throw new KeyNotFoundException("Событие не найдено");
+            var eventItem = _eventService.GetById(eventId);
+
+            if (eventItem == null)
+            {
+                throw new KeyNotFoundException("Событие не найдено");
+            }
+
+            var reserved = eventItem.TryReserveSeats();
+
+            if (!reserved)
+            {
+                throw new NoAvailableSeatsException();
+            }
+
+            var booking = new Booking
+            {
+                Id = Guid.NewGuid(),
+                EventId = eventId,
+                Status = BookingStatus.Pending,
+                CreatedAt = DateTime.UtcNow,
+                ProcessedAt = null
+            };
+
+            _bookings.Add(booking);
+
+            return Task.FromResult(booking);
         }
-
-        var booking = new Booking
-        {
-            Id = Guid.NewGuid(),
-            EventId = eventId,
-            Status = BookingStatus.Pending,
-            CreatedAt = DateTime.UtcNow,
-            ProcessedAt = null
-        };
-
-        _bookings.Add(booking);
-
-        return Task.FromResult(booking);
     }
 
     public Task<Booking?> GetBookingByIdAsync(Guid bookingId)
@@ -56,7 +68,7 @@ public class BookingService : IBookingService
 
         if (existingBooking == null)
         {
-            throw new KeyNotFoundException("Бронирование не нейдено");
+            throw new KeyNotFoundException("Бронирование не найдено");
         }
 
         existingBooking.Status = booking.Status;
