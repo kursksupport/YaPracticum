@@ -17,17 +17,27 @@ public class EventsController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<PaginatedResult> GetAll(string? title, DateTime? from, DateTime? to, int page = 1, int pageSize = 10)
+    public async Task<ActionResult<PaginatedResult>> GetAll(
+        string? title,
+        DateTime? from,
+        DateTime? to,
+        int page = 1,
+        int pageSize = 10)
     {
-        var result = _eventService.GetAll(title, from, to, page, pageSize);
+        var result = await _eventService.GetAllAsync(
+            title,
+            from,
+            to,
+            page,
+            pageSize);
 
         return Ok(result);
     }
 
     [HttpGet("{id}")]
-    public ActionResult<EventInfoDto> GetById(Guid id)
+    public async Task<ActionResult<EventInfoDto>> GetById(Guid id)
     {
-        var eventItem = _eventService.GetById(id);
+        var eventItem = await _eventService.GetByIdAsync(id);
 
         if (eventItem == null)
         {
@@ -47,14 +57,15 @@ public class EventsController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult<EventInfoDto> Create(CreateEventDto createEventDto)
+    public async Task<ActionResult<EventInfoDto>> Create(
+        CreateEventDto createEventDto)
     {
         if (createEventDto.EndAt <= createEventDto.StartAt)
         {
             return BadRequest("EndAt должна быть позже чем StartAt");
         }
 
-        var createdEvent = _eventService.Create(createEventDto);
+        var createdEvent = await _eventService.CreateAsync(createEventDto);
 
         return CreatedAtAction(
             nameof(GetById),
@@ -63,14 +74,16 @@ public class EventsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult Update(Guid id, Event updatedEvent)
+    public async Task<IActionResult> Update(
+        Guid id,
+        Event updatedEvent)
     {
         if (updatedEvent.EndAt <= updatedEvent.StartAt)
         {
             return BadRequest("EndAt должна быть позже чем StartAt");
         }
 
-        var updated = _eventService.Update(id, updatedEvent);
+        var updated = await _eventService.UpdateAsync(id, updatedEvent);
 
         if (!updated)
         {
@@ -79,10 +92,11 @@ public class EventsController : ControllerBase
 
         return NoContent();
     }
+
     [HttpDelete("{id}")]
-    public IActionResult Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
-        var deleted = _eventService.Delete(id);
+        var deleted = await _eventService.DeleteAsync(id);
 
         if (!deleted)
         {

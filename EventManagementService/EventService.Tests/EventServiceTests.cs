@@ -1,16 +1,39 @@
-﻿using EventManagementService.Models;
-using EventManagementService.Services;
+﻿using EventManagementService.DataAccess;
 using EventManagementService.DTOs;
+using EventManagementService.Models;
+using EventManagementService.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventManagementService.Tests;
 
 public class EventServiceTests
 {
-    [Fact]
-    public void Create_Should_Add_Event()
+
+    private static ServiceProvider CreateServiceProvider()
     {
-        //Подготовка
-        var service = new EventService();
+        var dbName = Guid.NewGuid().ToString();
+
+        var services = new ServiceCollection();
+
+        services.AddDbContext<AppDbContext>(options =>
+            options.UseInMemoryDatabase(dbName));
+
+        services.AddScoped<IEventService, EventService>();
+        services.AddScoped<IBookingService, BookingService>();
+
+        return services.BuildServiceProvider();
+    }
+
+    [Fact]
+    public async Task Create_Should_Add_Event()
+    {
+        // Подготовка
+        using var provider = CreateServiceProvider();
+        using var scope = provider.CreateScope();
+
+        var service = scope.ServiceProvider
+            .GetRequiredService<IEventService>();
 
         var eventItem = new CreateEventDto
         {
@@ -21,29 +44,39 @@ public class EventServiceTests
             TotalSeats = 10
         };
 
-        //Выполнение
-        var createdEvent = service.Create(eventItem);
+        // Выполнение
+        var createdEvent = await service.CreateAsync(eventItem);
 
-        //Проверка результата
+        // Проверка результата
         Assert.NotNull(createdEvent);
 
         Assert.NotEqual(Guid.Empty, createdEvent.Id);
 
         Assert.Equal("Тест создания события", createdEvent.Title);
 
-        var allEvents = service.GetAll(null, null, null, 1, 10);
+        var allEvents = await service.GetAllAsync(
+            null,
+            null,
+            null,
+            1,
+            10);
 
         Assert.Single(allEvents.Items);
     }
 
     //получение всех событий
+    // получение всех событий
     [Fact]
-    public void GetAll_Should_Return_All_Events()
+    public async Task GetAll_Should_Return_All_Events()
     {
-        //Подготовка
-        var service = new EventService();
+        // Подготовка
+        using var provider = CreateServiceProvider();
+        using var scope = provider.CreateScope();
 
-        service.Create(new CreateEventDto
+        var service = scope.ServiceProvider
+            .GetRequiredService<IEventService>();
+
+        await service.CreateAsync(new CreateEventDto
         {
             Title = "Событие 1",
             StartAt = DateTime.Now,
@@ -51,7 +84,7 @@ public class EventServiceTests
             TotalSeats = 10
         });
 
-        service.Create(new CreateEventDto
+        await service.CreateAsync(new CreateEventDto
         {
             Title = "Событие 2",
             StartAt = DateTime.Now,
@@ -59,21 +92,29 @@ public class EventServiceTests
             TotalSeats = 10
         });
 
-        //Выполнение
-        var result = service.GetAll(null, null, null, 1, 10);
+        // Выполнение
+        var result = await service.GetAllAsync(
+            null,
+            null,
+            null,
+            1,
+            10);
 
-        //Проверка результата
+        // Проверка результата
         Assert.Equal(2, result.Items.Count);
-
         Assert.Equal(2, result.TotalCount);
     }
 
     //получение события по ID
     [Fact]
-    public void GetById_Should_Return_Event()
+    public async Task GetById_Should_Return_Event()
     {
-        //Подготовка
-        var service = new EventService();
+        // Подготовка
+        using var provider = CreateServiceProvider();
+        using var scope = provider.CreateScope();
+
+        var service = scope.ServiceProvider
+            .GetRequiredService<IEventService>();
 
         var eventItem = new CreateEventDto
         {
@@ -84,12 +125,12 @@ public class EventServiceTests
             TotalSeats = 10
         };
 
-        var createdEvent = service.Create(eventItem);
+        var createdEvent = await service.CreateAsync(eventItem);
 
-        //Выполнение
-        var result = service.GetById(createdEvent.Id);
+        // Выполнение
+        var result = await service.GetByIdAsync(createdEvent.Id);
 
-        //Проверка результата
+        // Проверка результата
         Assert.NotNull(result);
 
         Assert.Equal(createdEvent.Id, result.Id);
@@ -99,13 +140,17 @@ public class EventServiceTests
 
     //попытка получить событие с несуществующим ID
     [Fact]
-    public void GetById_Should_Return_Null_When_Event_Not_Found()
+    public async Task GetById_Should_Return_Null_When_Event_Not_Found()
     {
         //Подготовка
-        var service = new EventService();
+        using var provider = CreateServiceProvider();
+        using var scope = provider.CreateScope();
+
+        var service = scope.ServiceProvider
+            .GetRequiredService<IEventService>();
 
         //Выполнение
-        var result = service.GetById(Guid.NewGuid());
+        var result = await service.GetByIdAsync(Guid.NewGuid());
 
         //Проверка результата
         Assert.Null(result);
@@ -113,10 +158,14 @@ public class EventServiceTests
 
     //обновление существующего события
     [Fact]
-    public void Update_Should_Modify_Existing_Event()
+    public async Task Update_Should_Modify_Existing_Event()
     {
         //Подготовка
-        var service = new EventService();
+        using var provider = CreateServiceProvider();
+        using var scope = provider.CreateScope();
+
+        var service = scope.ServiceProvider
+            .GetRequiredService<IEventService>();
 
         var eventItem = new CreateEventDto
         {
@@ -127,20 +176,18 @@ public class EventServiceTests
             TotalSeats = 10
         };
 
-        var createdEvent = service.Create(eventItem);
+        var createdEvent = await service.CreateAsync(eventItem);
 
-        var updatedEvent = new Event
-        {
-            Title = "Новое значение",
-            Description = "Новое описание",
-            StartAt = DateTime.Now.AddDays(1),
-            EndAt = DateTime.Now.AddDays(1).AddHours(2)
-        };
+        var updatedEvent = Event.Create("Новое значение",
+                                        "Новое описание",
+                                        DateTime.Now.AddDays(1),
+                                        DateTime.Now.AddDays(1).AddHours(2),
+                                        100);
 
         //Выполнение
-        var result = service.Update(createdEvent.Id, updatedEvent);
+        var result = await service.UpdateAsync(createdEvent.Id, updatedEvent);
 
-        var savedEvent = service.GetById(createdEvent.Id);
+        var savedEvent = await service.GetByIdAsync(createdEvent.Id);
 
         //Проверка результата
         Assert.True(result);
@@ -154,21 +201,23 @@ public class EventServiceTests
 
     //попытка обновить событие с несуществующим ID
     [Fact]
-    public void Update_Should_Return_False_When_Event_Not_Found()
+    public async Task Update_Should_Return_False_When_Event_Not_Found()
     {
         //Подготовка
-        var service = new EventService();
+        using var provider = CreateServiceProvider();
+        using var scope = provider.CreateScope();
 
-        var updatedEvent = new Event
-        {
-            Title = "попытка обновить событие с несуществующим ID",
-            Description = "Тестовое описание",
-            StartAt = DateTime.Now,
-            EndAt = DateTime.Now.AddHours(1)
-        };
+        var service = scope.ServiceProvider
+            .GetRequiredService<IEventService>();
+
+        var updatedEvent = Event.Create("попытка обновить событие с несуществующим ID",
+                                        "Тестовое описание",
+                                        DateTime.Now.AddDays(1),
+                                        DateTime.Now.AddDays(1).AddHours(2),
+                                        100);
 
         //Выполнение
-        var result = service.Update(Guid.NewGuid(), updatedEvent);
+        var result = await service.UpdateAsync(Guid.NewGuid(), updatedEvent);
 
         //Проверка результата
         Assert.False(result);
@@ -176,10 +225,14 @@ public class EventServiceTests
 
     //удаление существующего события
     [Fact]
-    public void Delete_Should_Remove_Existing_Event()
+    public async Task Delete_Should_Remove_Existing_Event()
     {
         //Подготовка
-        var service = new EventService();
+        using var provider = CreateServiceProvider();
+        using var scope = provider.CreateScope();
+
+        var service = scope.ServiceProvider
+            .GetRequiredService<IEventService>();
 
         var eventItem = new CreateEventDto
         {
@@ -190,12 +243,12 @@ public class EventServiceTests
             TotalSeats = 10
         };
 
-        var createdEvent = service.Create(eventItem);
+        var createdEvent = await service.CreateAsync(eventItem);
 
         //Выполнение
-        var result = service.Delete(createdEvent.Id);
+        var result = await service.DeleteAsync(createdEvent.Id);
 
-        var deletedEvent = service.GetById(createdEvent.Id);
+        var deletedEvent = await service.GetByIdAsync(createdEvent.Id);
 
         //Проверка результата
         Assert.True(result);
@@ -204,13 +257,17 @@ public class EventServiceTests
     }
 
     [Fact]
-    public void Delete_Should_Return_False_When_Event_Not_Found()
+    public async Task Delete_Should_Return_False_When_Event_Not_Found()
     {
         //Подготовка
-        var service = new EventService();
+        using var provider = CreateServiceProvider();
+        using var scope = provider.CreateScope();
+
+        var service = scope.ServiceProvider
+            .GetRequiredService<IEventService>();
 
         //Выполнение
-        var result = service.Delete(Guid.NewGuid());
+        var result = await service.DeleteAsync(Guid.NewGuid());
 
         //Проверка результата
         Assert.False(result);
@@ -218,12 +275,16 @@ public class EventServiceTests
 
     //фильтрация по названию
     [Fact]
-    public void GetAll_Should_Filter_By_Title()
+    public async Task GetAll_Should_Filter_By_Title()
     {
         //Подготовка
-        var service = new EventService();
+        using var provider = CreateServiceProvider();
+        using var scope = provider.CreateScope();
 
-        service.Create(new CreateEventDto
+        var service = scope.ServiceProvider
+            .GetRequiredService<IEventService>();
+
+        await service.CreateAsync(new CreateEventDto
         {
             Title = "Тест событие Фильтр",
             Description = "Тестовое описание",
@@ -232,7 +293,7 @@ public class EventServiceTests
             TotalSeats = 10
         });
 
-        service.Create(new CreateEventDto
+        await service.CreateAsync(new CreateEventDto
         {
             Title = "Событие 2",
             Description = "Тестовое описание 2",
@@ -242,7 +303,7 @@ public class EventServiceTests
         });
 
         //Выполнение
-        var result = service.GetAll("Тест", null, null, 1, 10);
+        var result = await service.GetAllAsync("Тест", null, null, 1, 10);
 
         //Проверка результата
         Assert.Single(result.Items);
@@ -252,12 +313,16 @@ public class EventServiceTests
 
     //фильтрация по датам
     [Fact]
-    public void GetAll_Should_Filter_By_Date_Range()
+    public async Task GetAll_Should_Filter_By_Date_Range()
     {
         //Подготовка
-        var service = new EventService();
+        using var provider = CreateServiceProvider();
+        using var scope = provider.CreateScope();
 
-        service.Create(new CreateEventDto
+        var service = scope.ServiceProvider
+            .GetRequiredService<IEventService>();
+
+        await service.CreateAsync(new CreateEventDto
         {
             Title = "Первое событие",
             StartAt = new DateTime(2026, 1, 1),
@@ -265,7 +330,7 @@ public class EventServiceTests
             TotalSeats = 10
         });
 
-        service.Create(new CreateEventDto
+        await service.CreateAsync(new CreateEventDto
         {
             Title = "Второе событие",
             StartAt = new DateTime(2026, 6, 1),
@@ -274,7 +339,7 @@ public class EventServiceTests
         });
 
         //Выполнение
-        var result = service.GetAll(
+        var result = await service.GetAllAsync(
             null,
             new DateTime(2026, 5, 1),
             new DateTime(2026, 12, 31),
@@ -289,14 +354,18 @@ public class EventServiceTests
 
     //пагинация событий
     [Fact]
-    public void GetAll_Should_Return_Correct_Page()
+    public async Task GetAll_Should_Return_Correct_Page()
     {
         //Подготовка
-        var service = new EventService();
+        using var provider = CreateServiceProvider();
+        using var scope = provider.CreateScope();
+
+        var service = scope.ServiceProvider
+            .GetRequiredService<IEventService>();
 
         for (int i = 1; i <= 15; i++)
         {
-            service.Create(new CreateEventDto
+            await service.CreateAsync(new CreateEventDto
             {
                 Title = $"Событие {i}",
                 StartAt = DateTime.Now,
@@ -306,7 +375,7 @@ public class EventServiceTests
         }
 
         //Выполнение
-        var result = service.GetAll(null, null, null, 2, 5);
+        var result = await service.GetAllAsync(null, null, null, 2, 5);
 
         //Проверка результата
         Assert.Equal(5, result.Items.Count);
@@ -318,12 +387,16 @@ public class EventServiceTests
 
     //комбинированная фильтрация
     [Fact]
-    public void GetAll_Should_Apply_Combined_Filters()
+    public async Task GetAll_Should_Apply_Combined_Filters()
     {
         //Подготовка
-        var service = new EventService();
+        using var provider = CreateServiceProvider();
+        using var scope = provider.CreateScope();
 
-        service.Create(new CreateEventDto
+        var service = scope.ServiceProvider
+            .GetRequiredService<IEventService>();
+
+        await service.CreateAsync(new CreateEventDto
         {
             Title = "Тестовое событие 1",
             StartAt = new DateTime(2026, 6, 1),
@@ -331,7 +404,7 @@ public class EventServiceTests
             TotalSeats = 10
         });
 
-        service.Create(new CreateEventDto
+        await service.CreateAsync(new CreateEventDto
         {
             Title = "Тестовое событие 2",
             StartAt = new DateTime(2025, 6, 1),
@@ -339,7 +412,7 @@ public class EventServiceTests
             TotalSeats = 10
         });
 
-        service.Create(new CreateEventDto
+        await service.CreateAsync(new CreateEventDto
         {
             Title = "Событие",
             StartAt = new DateTime(2026, 6, 1),
@@ -348,7 +421,7 @@ public class EventServiceTests
         });
 
         //Выполнение
-        var result = service.GetAll(
+        var result = await service.GetAllAsync(
             "Тест",
             new DateTime(2026, 1, 1),
             new DateTime(2026, 12, 31),

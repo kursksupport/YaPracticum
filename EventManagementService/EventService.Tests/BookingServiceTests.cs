@@ -254,13 +254,7 @@ public class BookingServiceTests
     public void Confirm_Should_Set_Status_And_ProcessedAt()
     {
         //Подготовка
-        var booking = new Booking
-        {
-            Id = Guid.NewGuid(),
-            EventId = Guid.NewGuid(),
-            Status = BookingStatus.Pending,
-            CreatedAt = DateTime.UtcNow
-        };
+        var booking = Booking.Create(Guid.NewGuid());
 
         //Выполнение
         booking.Confirm();
@@ -279,13 +273,7 @@ public class BookingServiceTests
     public void Reject_Should_Set_Status_And_ProcessedAt()
     {
         //Подготовка
-        var booking = new Booking
-        {
-            Id = Guid.NewGuid(),
-            EventId = Guid.NewGuid(),
-            Status = BookingStatus.Pending,
-            CreatedAt = DateTime.UtcNow
-        };
+        var booking = Booking.Create(Guid.NewGuid());
 
         //Выполнение
         booking.Reject();

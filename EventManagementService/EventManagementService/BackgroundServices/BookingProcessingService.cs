@@ -1,94 +1,89 @@
 ﻿using EventManagementService.Models;
 using EventManagementService.Services;
-using System.Threading;
 
 namespace EventManagementService.BackgroundServices;
 
 public class BookingProcessingService : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<BookingProcessingService> _logger;
-    private readonly SemaphoreSlim _processingSemaphore = new(1, 1);
 
     public BookingProcessingService(
-        IServiceProvider serviceProvider,
+        IServiceScopeFactory scopeFactory,
         ILogger<BookingProcessingService> logger)
     {
-        _serviceProvider = serviceProvider;
+        _scopeFactory = scopeFactory;
         _logger = logger;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(
+        CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            using var scope = _serviceProvider.CreateScope();
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var bookingService =
+                    scope.ServiceProvider
+                        .GetRequiredService<IBookingService>();
 
-            var bookingService =
-                scope.ServiceProvider.GetRequiredService<IBookingService>();
+                var pendingBookings =
+                    await bookingService.GetPendingBookingsAsync();
 
-            var eventService =
-                scope.ServiceProvider.GetRequiredService<IEventService>();
+                var tasks = pendingBookings
+                    .Select(b => ProcessBookingAsync(
+                        b,
+                        stoppingToken));
 
-            var pendingBookings =
-                (await bookingService.GetPendingBookingsAsync())
-                .ToList();
-
-            var tasks = pendingBookings
-                .Select(b => ProcessBookingAsync(
-                    b,
-                    bookingService,
-                    eventService,
-                    stoppingToken));
-
-            await Task.WhenAll(tasks);
+                await Task.WhenAll(tasks);
+            }
 
             await Task.Delay(1000, stoppingToken);
         }
     }
 
     private async Task ProcessBookingAsync(
-    Booking booking,
-    IBookingService bookingService,
-    IEventService eventService,
-    CancellationToken stoppingToken)
+        Booking booking,
+        CancellationToken stoppingToken)
     {
         _logger.LogInformation(
-    "Обработка бронирования {BookingId}",
-    booking.Id);
+            "Обработка бронирования {BookingId}",
+            booking.Id);
 
         try
         {
             await Task.Delay(2000, stoppingToken);
 
-            await _processingSemaphore.WaitAsync(stoppingToken);
+            using var scope = _scopeFactory.CreateScope();
 
-            try
+            var bookingService =
+                scope.ServiceProvider
+                    .GetRequiredService<IBookingService>();
+
+            var eventService =
+                scope.ServiceProvider
+                    .GetRequiredService<IEventService>();
+
+            var eventItem =
+                await eventService.GetByIdAsync(
+                    booking.EventId);
+
+            if (eventItem == null)
             {
-                var eventItem =
-                    eventService.GetById(booking.EventId);
-
-                if (eventItem == null)
-                {
-                    booking.Reject();
-
-                    await bookingService.UpdateBookingAsync(booking);
-
-                    _logger.LogWarning(
-                        "Событие удалено для брони {BookingId}",
-                        booking.Id);
-
-                    return;
-                }
-
-                booking.Confirm();
+                booking.Reject();
 
                 await bookingService.UpdateBookingAsync(booking);
+
+                _logger.LogWarning(
+                    "Событие удалено для брони {BookingId}",
+                    booking.Id);
+
+                return;
             }
-            finally
-            {
-                _processingSemaphore.Release();
-            }
+
+            booking.Confirm();
+
+            await bookingService.UpdateBookingAsync(booking);
         }
         catch (OperationCanceledException)
         {
@@ -103,8 +98,19 @@ public class BookingProcessingService : BackgroundService
 
             booking.Reject();
 
+            using var scope = _scopeFactory.CreateScope();
+
+            var bookingService =
+                scope.ServiceProvider
+                    .GetRequiredService<IBookingService>();
+
+            var eventService =
+                scope.ServiceProvider
+                    .GetRequiredService<IEventService>();
+
             var eventItem =
-                eventService.GetById(booking.EventId);
+                await eventService.GetByIdAsync(
+                    booking.EventId);
 
             eventItem?.ReleaseSeats();
 

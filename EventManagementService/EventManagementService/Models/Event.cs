@@ -1,8 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace EventManagementService.Models;
 public class Event
 {
+    private Event()
+    {
+    }
+
     [Required]
     public Guid Id { get; set; }
 
@@ -22,6 +27,8 @@ public class Event
 
     [Required]
     public int AvailableSeats { get; private set; }
+    [JsonIgnore]
+    public ICollection<Booking> Bookings { get; private set; } = new List<Booking>();
 
     public static Event Create(
         string title,
