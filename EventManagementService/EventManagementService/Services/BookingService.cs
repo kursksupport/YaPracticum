@@ -1,19 +1,23 @@
-﻿using EventManagementService.DataAccess;
+﻿using EventManagementService.DataAccess.Repositories;
 using EventManagementService.Exceptions;
 using EventManagementService.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace EventManagementService.Services;
 
 public class BookingService : IBookingService
 {
-    private readonly AppDbContext _context;
-
+    
     private static readonly SemaphoreSlim _bookingSemaphore = new(1, 1);
 
-    public BookingService(AppDbContext context)
+    private readonly IEventRepository _eventRepository;
+    private readonly IBookingRepository _bookingRepository;
+
+    public BookingService(
+        IEventRepository eventRepository,
+        IBookingRepository bookingRepository)
     {
-        _context = context;
+        _eventRepository = eventRepository;
+        _bookingRepository = bookingRepository;
     }
 
     public async Task<Booking> CreateBookingAsync(Guid eventId)
@@ -22,8 +26,7 @@ public class BookingService : IBookingService
 
         try
         {
-            var eventItem = await _context.Events
-                .FirstOrDefaultAsync(e => e.Id == eventId);
+            var eventItem = await _eventRepository.GetByIdAsync(eventId);
 
             if (eventItem == null)
             {
@@ -39,9 +42,9 @@ public class BookingService : IBookingService
 
             var booking = Booking.Create(eventId);
 
-            _context.Bookings.Add(booking);
+            await _bookingRepository.AddAsync(booking);
 
-            await _context.SaveChangesAsync();
+            await _bookingRepository.SaveChangesAsync();
 
             return booking;
         }
@@ -53,21 +56,17 @@ public class BookingService : IBookingService
 
     public async Task<Booking?> GetBookingByIdAsync(Guid bookingId)
     {
-        return await _context.Bookings
-            .FirstOrDefaultAsync(b => b.Id == bookingId);
+        return await _bookingRepository.GetByIdAsync(bookingId);
     }
 
     public async Task<List<Booking>> GetPendingBookingsAsync()
     {
-        return await _context.Bookings
-            .Where(b => b.Status == BookingStatus.Pending)
-            .ToListAsync();
+        return await _bookingRepository.GetPendingAsync();
     }
 
     public async Task UpdateBookingAsync(Booking booking)
     {
-        var existingBooking = await _context.Bookings
-            .FirstOrDefaultAsync(b => b.Id == booking.Id);
+        var existingBooking = await _bookingRepository.GetByIdAsync(booking.Id);
 
         if (existingBooking == null)
         {
@@ -77,6 +76,6 @@ public class BookingService : IBookingService
         existingBooking.Status = booking.Status;
         existingBooking.ProcessedAt = booking.ProcessedAt;
 
-        await _context.SaveChangesAsync();
+        await _bookingRepository.SaveChangesAsync();
     }
 }

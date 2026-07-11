@@ -1,5 +1,5 @@
-﻿using EventManagementService.Models;
-using EventManagementService.Services;
+﻿using EventManagementService.DataAccess.Repositories;
+using EventManagementService.Models;
 
 namespace EventManagementService.BackgroundServices;
 
@@ -23,12 +23,11 @@ public class BookingProcessingService : BackgroundService
         {
             using (var scope = _scopeFactory.CreateScope())
             {
-                var bookingService =
-                    scope.ServiceProvider
-                        .GetRequiredService<IBookingService>();
+                var bookingRepository =
+                    scope.ServiceProvider.GetRequiredService<IBookingRepository>();
 
                 var pendingBookings =
-                    await bookingService.GetPendingBookingsAsync();
+                    await bookingRepository.GetPendingAsync();
 
                 var tasks = pendingBookings
                     .Select(b => ProcessBookingAsync(
@@ -56,23 +55,23 @@ public class BookingProcessingService : BackgroundService
 
             using var scope = _scopeFactory.CreateScope();
 
-            var bookingService =
+            var bookingRepository =
                 scope.ServiceProvider
-                    .GetRequiredService<IBookingService>();
+                    .GetRequiredService<IBookingRepository>();
 
-            var eventService =
+            var eventRepository =
                 scope.ServiceProvider
-                    .GetRequiredService<IEventService>();
+                    .GetRequiredService<IEventRepository>();
 
             var eventItem =
-                await eventService.GetByIdAsync(
+                await eventRepository.GetByIdAsync(
                     booking.EventId);
 
             if (eventItem == null)
             {
                 booking.Reject();
 
-                await bookingService.UpdateBookingAsync(booking);
+                await bookingRepository.SaveChangesAsync();
 
                 _logger.LogWarning(
                     "Событие удалено для брони {BookingId}",
@@ -83,7 +82,7 @@ public class BookingProcessingService : BackgroundService
 
             booking.Confirm();
 
-            await bookingService.UpdateBookingAsync(booking);
+            await bookingRepository.SaveChangesAsync();
         }
         catch (OperationCanceledException)
         {
@@ -100,21 +99,21 @@ public class BookingProcessingService : BackgroundService
 
             using var scope = _scopeFactory.CreateScope();
 
-            var bookingService =
+            var bookingRepository =
                 scope.ServiceProvider
-                    .GetRequiredService<IBookingService>();
+                    .GetRequiredService<IBookingRepository>();
 
-            var eventService =
+            var eventRepository =
                 scope.ServiceProvider
-                    .GetRequiredService<IEventService>();
+                    .GetRequiredService<IEventRepository>();
 
             var eventItem =
-                await eventService.GetByIdAsync(
+                await eventRepository.GetByIdAsync(
                     booking.EventId);
 
             eventItem?.ReleaseSeats();
 
-            await bookingService.UpdateBookingAsync(booking);
+            await bookingRepository.SaveChangesAsync();
         }
     }
 }
