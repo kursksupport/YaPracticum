@@ -1,111 +1,132 @@
-﻿using EventManagementService.DTOs;
+﻿using EventManagementService.DataAccess;
+using EventManagementService.DTOs;
 using EventManagementService.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace EventManagementService.Services
+namespace EventManagementService.Services;
+
+public class EventService : IEventService
 {
-    public class EventService : IEventService
+    private readonly AppDbContext _context;
+
+
+    public EventService(AppDbContext context)
     {
-        private readonly List<Event> _events = new();
+        _context = context;
+    }
 
+    public async Task<PaginatedResult> GetAllAsync(
+        string? title,
+        DateTime? from,
+        DateTime? to,
+        int page,
+        int pageSize)
+    {
+        var query = _context.Events.AsQueryable();
 
-        public PaginatedResult GetAll(string? title, DateTime? from, DateTime? to, int page, int pageSize)
+        if (!string.IsNullOrWhiteSpace(title))
         {
-            var query = _events.AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(title))
-            {
-                query = query.Where(e =>
-                    e.Title.Contains(title, StringComparison.OrdinalIgnoreCase));
-            }
-
-            if (from.HasValue)
-            {
-                query = query.Where(e => e.StartAt >= from.Value);
-            }
-
-            if (to.HasValue)
-            {
-                query = query.Where(e => e.EndAt <= to.Value);
-            }
-
-            var totalCount = query.Count();
-
-            var items = query
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
-
-            return new PaginatedResult
-            {
-                TotalCount = totalCount,
-                Items = items,
-                Page = page,
-                PageSize = pageSize
-            };
+            query = query.Where(e =>
+                e.Title.Contains(title));
         }
 
-        public Event? GetById(Guid id)
+        if (from.HasValue)
         {
-            return _events.FirstOrDefault(e => e.Id == id);
+            query = query.Where(e => e.StartAt >= from.Value);
         }
 
-        public EventInfoDto Create(CreateEventDto createEventDto)
+        if (to.HasValue)
         {
-            var eventItem = Event.Create(
-                createEventDto.Title,
-                createEventDto.Description,
-                createEventDto.StartAt,
-                createEventDto.EndAt,
-                createEventDto.TotalSeats!.Value);
-
-            _events.Add(eventItem);
-
-            return new EventInfoDto
-            {
-                Id = eventItem.Id,
-                Title = eventItem.Title,
-                Description = eventItem.Description,
-                StartAt = eventItem.StartAt,
-                EndAt = eventItem.EndAt,
-                TotalSeats = eventItem.TotalSeats,
-                AvailableSeats = eventItem.AvailableSeats
-            };
+            query = query.Where(e => e.EndAt <= to.Value);
         }
 
-        public bool Update(Guid id, Event updatedEvent)
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PaginatedResult
         {
-            var existingEvent = GetById(id);
+            TotalCount = totalCount,
+            Items = items,
+            Page = page,
+            PageSize = pageSize
+        };
+    }
 
-            if (existingEvent == null)
-            {
-                return false;
-            }
+    public async Task<Event?> GetByIdAsync(Guid id)
+    {
+        return await _context.Events
+            .FirstOrDefaultAsync(e => e.Id == id);
+    }
 
-            existingEvent.Title = updatedEvent.Title;
-            existingEvent.Description = updatedEvent.Description;
-            existingEvent.StartAt = updatedEvent.StartAt;
-            existingEvent.EndAt = updatedEvent.EndAt;
+    public async Task<EventInfoDto> CreateAsync(
+        CreateEventDto createEventDto)
+    {
+        var eventItem = Event.Create(
+            createEventDto.Title,
+            createEventDto.Description,
+            createEventDto.StartAt,
+            createEventDto.EndAt,
+            createEventDto.TotalSeats!.Value);
 
-            if (updatedEvent.TotalSeats > 0)
-            {
-                existingEvent.UpdateSeats(updatedEvent.TotalSeats);
-            }
+        _context.Events.Add(eventItem);
 
-            return true;
+        await _context.SaveChangesAsync();
+
+        return new EventInfoDto
+        {
+            Id = eventItem.Id,
+            Title = eventItem.Title,
+            Description = eventItem.Description,
+            StartAt = eventItem.StartAt,
+            EndAt = eventItem.EndAt,
+            TotalSeats = eventItem.TotalSeats,
+            AvailableSeats = eventItem.AvailableSeats
+        };
+    }
+
+    public async Task<bool> UpdateAsync(
+        Guid id,
+        Event updatedEvent)
+    {
+        var existingEvent = await GetByIdAsync(id);
+
+        if (existingEvent == null)
+        {
+            return false;
         }
 
-        public bool Delete(Guid id)
+        existingEvent.Title = updatedEvent.Title;
+        existingEvent.Description = updatedEvent.Description;
+        existingEvent.StartAt = updatedEvent.StartAt;
+        existingEvent.EndAt = updatedEvent.EndAt;
+
+        if (updatedEvent.TotalSeats > 0)
         {
-            var eventItem = GetById(id);
-
-            if (eventItem == null)
-            {
-                return false;
-            }
-
-            _events.Remove(eventItem);
-
-            return true;
+            existingEvent.UpdateSeats(updatedEvent.TotalSeats);
         }
+
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<bool> DeleteAsync(Guid id)
+    {
+        var eventItem = await GetByIdAsync(id);
+
+        if (eventItem == null)
+        {
+            return false;
+        }
+
+        _context.Events.Remove(eventItem);
+
+        await _context.SaveChangesAsync();
+
+        return true;
     }
 }

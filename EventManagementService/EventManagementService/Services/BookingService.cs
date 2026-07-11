@@ -1,24 +1,29 @@
-﻿using EventManagementService.Exceptions;
+﻿using EventManagementService.DataAccess;
+using EventManagementService.Exceptions;
 using EventManagementService.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventManagementService.Services;
 
 public class BookingService : IBookingService
 {
-    private readonly List<Booking> _bookings = new();
-    private readonly IEventService _eventService;
-    private readonly object _bookingLock = new();
+    private readonly AppDbContext _context;
 
-    public BookingService(IEventService eventService)
+    private static readonly SemaphoreSlim _bookingSemaphore = new(1, 1);
+
+    public BookingService(AppDbContext context)
     {
-        _eventService = eventService;
+        _context = context;
     }
 
-    public Task<Booking> CreateBookingAsync(Guid eventId)
+    public async Task<Booking> CreateBookingAsync(Guid eventId)
     {
-        lock (_bookingLock)
+        await _bookingSemaphore.WaitAsync();
+
+        try
         {
-            var eventItem = _eventService.GetById(eventId);
+            var eventItem = await _context.Events
+                .FirstOrDefaultAsync(e => e.Id == eventId);
 
             if (eventItem == null)
             {
@@ -32,39 +37,37 @@ public class BookingService : IBookingService
                 throw new NoAvailableSeatsException();
             }
 
-            var booking = new Booking
-            {
-                Id = Guid.NewGuid(),
-                EventId = eventId,
-                Status = BookingStatus.Pending,
-                CreatedAt = DateTime.UtcNow,
-                ProcessedAt = null
-            };
+            var booking = Booking.Create(eventId);
 
-            _bookings.Add(booking);
+            _context.Bookings.Add(booking);
 
-            return Task.FromResult(booking);
+            await _context.SaveChangesAsync();
+
+            return booking;
+        }
+        finally
+        {
+            _bookingSemaphore.Release();
         }
     }
 
-    public Task<Booking?> GetBookingByIdAsync(Guid bookingId)
+    public async Task<Booking?> GetBookingByIdAsync(Guid bookingId)
     {
-        var booking = _bookings.FirstOrDefault(b => b.Id == bookingId);
-        return Task.FromResult(booking);
+        return await _context.Bookings
+            .FirstOrDefaultAsync(b => b.Id == bookingId);
     }
 
-    public Task<List<Booking>> GetPendingBookingsAsync()
+    public async Task<List<Booking>> GetPendingBookingsAsync()
     {
-        var pendingBookings = _bookings
+        return await _context.Bookings
             .Where(b => b.Status == BookingStatus.Pending)
-            .ToList();
-
-        return Task.FromResult(pendingBookings);
+            .ToListAsync();
     }
 
-    public Task UpdateBookingAsync(Booking booking)
+    public async Task UpdateBookingAsync(Booking booking)
     {
-        var existingBooking = _bookings.FirstOrDefault(b => b.Id == booking.Id);
+        var existingBooking = await _context.Bookings
+            .FirstOrDefaultAsync(b => b.Id == booking.Id);
 
         if (existingBooking == null)
         {
@@ -74,6 +77,6 @@ public class BookingService : IBookingService
         existingBooking.Status = booking.Status;
         existingBooking.ProcessedAt = booking.ProcessedAt;
 
-        return Task.CompletedTask;
+        await _context.SaveChangesAsync();
     }
 }
