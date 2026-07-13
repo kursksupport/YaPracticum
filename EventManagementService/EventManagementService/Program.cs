@@ -4,7 +4,6 @@ using EventManagementService.Services;
 using EventManagementService.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using EventManagementService.DataAccess.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace EventManagementService
 {
