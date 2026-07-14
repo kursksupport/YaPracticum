@@ -1,56 +1,37 @@
-﻿using EventManagementService.DataAccess;
+﻿using EventManagementService.DataAccess.Repositories;
 using EventManagementService.DTOs;
 using EventManagementService.Models;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace EventManagementService.Services;
 
 public class EventService : IEventService
 {
-    private readonly AppDbContext _context;
+    private readonly IEventRepository _repository;
 
 
-    public EventService(AppDbContext context)
+    public EventService(IEventRepository repository)
     {
-        _context = context;
+        _repository = repository;
     }
-
     public async Task<PaginatedResult> GetAllAsync(
-        string? title,
-        DateTime? from,
-        DateTime? to,
-        int page,
-        int pageSize)
+    string? title,
+    DateTime? from,
+    DateTime? to,
+    int page,
+    int pageSize)
     {
-        var query = _context.Events.AsQueryable();
-
-        if (!string.IsNullOrWhiteSpace(title))
-        {
-            query = query.Where(e =>
-                e.Title.Contains(title));
-        }
-
-        if (from.HasValue)
-        {
-            query = query.Where(e => e.StartAt >= from.Value);
-        }
-
-        if (to.HasValue)
-        {
-            query = query.Where(e => e.EndAt <= to.Value);
-        }
-
-        var totalCount = await query.CountAsync();
-
-        var items = await query
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
+        var result = await _repository.GetAllAsync(
+            title,
+            from,
+            to,
+            page,
+            pageSize);
 
         return new PaginatedResult
         {
-            TotalCount = totalCount,
-            Items = items,
+            TotalCount = result.TotalCount,
+            Items = result.Items,
             Page = page,
             PageSize = pageSize
         };
@@ -58,8 +39,7 @@ public class EventService : IEventService
 
     public async Task<Event?> GetByIdAsync(Guid id)
     {
-        return await _context.Events
-            .FirstOrDefaultAsync(e => e.Id == id);
+        return await _repository.GetByIdAsync(id);
     }
 
     public async Task<EventInfoDto> CreateAsync(
@@ -72,9 +52,9 @@ public class EventService : IEventService
             createEventDto.EndAt,
             createEventDto.TotalSeats!.Value);
 
-        _context.Events.Add(eventItem);
+        await _repository.AddAsync(eventItem);
 
-        await _context.SaveChangesAsync();
+        await _repository.SaveChangesAsync();
 
         return new EventInfoDto
         {
@@ -92,7 +72,7 @@ public class EventService : IEventService
         Guid id,
         Event updatedEvent)
     {
-        var existingEvent = await GetByIdAsync(id);
+        var existingEvent = await _repository.GetByIdAsync(id);
 
         if (existingEvent == null)
         {
@@ -109,7 +89,7 @@ public class EventService : IEventService
             existingEvent.UpdateSeats(updatedEvent.TotalSeats);
         }
 
-        await _context.SaveChangesAsync();
+        await _repository.SaveChangesAsync();
 
         return true;
     }
@@ -123,9 +103,9 @@ public class EventService : IEventService
             return false;
         }
 
-        _context.Events.Remove(eventItem);
+        await _repository.DeleteAsync(eventItem);
 
-        await _context.SaveChangesAsync();
+        await _repository.SaveChangesAsync();
 
         return true;
     }

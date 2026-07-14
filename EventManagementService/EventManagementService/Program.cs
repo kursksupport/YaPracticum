@@ -3,6 +3,7 @@ using EventManagementService.Middleware;
 using EventManagementService.Services;
 using EventManagementService.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using EventManagementService.DataAccess.Repositories;
 
 namespace EventManagementService
 {
@@ -23,6 +24,9 @@ namespace EventManagementService
 
             builder.Services.AddScoped<IEventService, EventService>();
             builder.Services.AddScoped<IBookingService, BookingService>();
+              
+            builder.Services.AddScoped<IEventRepository, EventRepository>();
+            builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 
             builder.Services.AddHostedService<BookingProcessingService>();
 
@@ -33,7 +37,7 @@ namespace EventManagementService
                 var db = scope.ServiceProvider
                     .GetRequiredService<AppDbContext>();
 
-                db.Database.EnsureCreated();
+                db.Database.Migrate();
             }
 
             app.UseMiddleware<ExceptionHandlingMiddleware>();

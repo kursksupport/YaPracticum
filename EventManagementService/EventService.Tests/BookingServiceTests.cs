@@ -1,10 +1,11 @@
 ﻿using EventManagementService.DataAccess;
+using EventManagementService.DataAccess.Repositories;
 using EventManagementService.DTOs;
 using EventManagementService.Exceptions;
 using EventManagementService.Models;
 using EventManagementService.Services;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EventManagementService.Tests;
 
@@ -18,6 +19,9 @@ public class BookingServiceTests
 
         services.AddDbContext<AppDbContext>(options =>
             options.UseInMemoryDatabase(dbName));
+
+        services.AddScoped<IEventRepository, EventRepository>();
+        services.AddScoped<IBookingRepository, BookingRepository>();
 
         services.AddScoped<IEventService, EventService>();
         services.AddScoped<IBookingService, BookingService>();
