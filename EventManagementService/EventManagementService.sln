@@ -4,10 +4,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.14.36804.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManagementService", "EventManagementService\EventManagementService.csproj", "{1712834F-33A5-4415-9703-0A12B18E1CD8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{21A3749D-9688-4F17-88C4-AEE0C28B97CD} = {21A3749D-9688-4F17-88C4-AEE0C28B97CD}
+		{46E4AE46-90E2-42B2-A7D1-64B63CDCD53A} = {46E4AE46-90E2-42B2-A7D1-64B63CDCD53A}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventService.Tests", "EventService.Tests\EventService.Tests.csproj", "{7DA1313E-E6C7-4827-A351-662AC6EAFCDB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventApi.IntegrationTests", "EventApi.IntegrationTests\EventApi.IntegrationTests.csproj", "{E3599491-BA47-4736-9AAE-44CFC81DC295}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManagementService.Domain", "EventManagementService.Domain\EventManagementService.Domain.csproj", "{6650F779-AEA9-4506-9EDD-DE5B385B4C0E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManagementService.Application", "EventManagementService.Application\EventManagementService.Application.csproj", "{21A3749D-9688-4F17-88C4-AEE0C28B97CD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6650F779-AEA9-4506-9EDD-DE5B385B4C0E} = {6650F779-AEA9-4506-9EDD-DE5B385B4C0E}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManagementService.Infrastructure", "EventManagementService.Infrastructure\EventManagementService.Infrastructure.csproj", "{46E4AE46-90E2-42B2-A7D1-64B63CDCD53A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{21A3749D-9688-4F17-88C4-AEE0C28B97CD} = {21A3749D-9688-4F17-88C4-AEE0C28B97CD}
+		{6650F779-AEA9-4506-9EDD-DE5B385B4C0E} = {6650F779-AEA9-4506-9EDD-DE5B385B4C0E}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +44,18 @@ Global
 		{E3599491-BA47-4736-9AAE-44CFC81DC295}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E3599491-BA47-4736-9AAE-44CFC81DC295}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E3599491-BA47-4736-9AAE-44CFC81DC295}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6650F779-AEA9-4506-9EDD-DE5B385B4C0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6650F779-AEA9-4506-9EDD-DE5B385B4C0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6650F779-AEA9-4506-9EDD-DE5B385B4C0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6650F779-AEA9-4506-9EDD-DE5B385B4C0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21A3749D-9688-4F17-88C4-AEE0C28B97CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21A3749D-9688-4F17-88C4-AEE0C28B97CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21A3749D-9688-4F17-88C4-AEE0C28B97CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21A3749D-9688-4F17-88C4-AEE0C28B97CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46E4AE46-90E2-42B2-A7D1-64B63CDCD53A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46E4AE46-90E2-42B2-A7D1-64B63CDCD53A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46E4AE46-90E2-42B2-A7D1-64B63CDCD53A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46E4AE46-90E2-42B2-A7D1-64B63CDCD53A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
