@@ -1,7 +1,8 @@
 ﻿using EventApi.IntegrationTests.Collections;
 using EventApi.IntegrationTests.Fixtures;
 using EventManagementService.DataAccess.Repositories;
-using EventManagementService.Models;
+using EventManagementService.Domain.Entities;
+using EventManagementService.Domain.Enums;
 
 namespace EventApi.IntegrationTests;
 

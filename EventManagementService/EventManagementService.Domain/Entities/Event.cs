@@ -1,33 +1,26 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using EventManagementService.Domain.Exceptions;
 
-namespace EventManagementService.Models;
+namespace EventManagementService.Domain.Entities;
 public class Event
 {
     private Event()
     {
     }
 
-    [Required]
     public Guid Id { get; set; }
 
-    [Required]
     public string Title { get; set; } = string.Empty;
 
     public string? Description { get; set; }
 
-    [Required]
     public DateTime StartAt { get; set; }
 
-    [Required]
     public DateTime EndAt { get; set; }
 
-    [Required]
     public int TotalSeats { get; private set; }
 
-    [Required]
     public int AvailableSeats { get; private set; }
-    [JsonIgnore]
+
     public ICollection<Booking> Bookings { get; private set; } = new List<Booking>();
 
     public static Event Create(
@@ -39,7 +32,7 @@ public class Event
     {
         if (totalSeats <= 0)
         {
-            throw new ValidationException("totalSeats должно быть больше нуля");
+            throw new DomainException("totalSeats должно быть больше нуля");
         }
 
         return new Event
@@ -89,16 +82,14 @@ public class Event
     {
         if (totalSeats <= 0)
         {
-            throw new ValidationException(
-                "TotalSeats должно быть больше нуля");
+            throw new DomainException("TotalSeats должно быть больше нуля");
         }
 
         var reservedSeats = TotalSeats - AvailableSeats;
 
         if (totalSeats < reservedSeats)
         {
-            throw new ValidationException(
-                "Количество мест не может быть меньше зарезервированных");
+            throw new DomainException("Количество мест не может быть меньше зарезервированных");
         }
 
         TotalSeats = totalSeats;

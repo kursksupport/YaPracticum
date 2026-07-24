@@ -1,0 +1,8 @@
+﻿namespace EventManagementService.Domain.Enums;
+
+public enum BookingStatus
+{
+    Pending,
+    Confirmed,
+    Rejected
+}

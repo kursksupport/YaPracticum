@@ -1,5 +1,6 @@
-﻿using EventManagementService.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using EventManagementService.Domain.Entities;
+using EventManagementService.Domain.Enums;
 
 namespace EventManagementService.DataAccess;
 

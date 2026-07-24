@@ -2,7 +2,8 @@
 using EventManagementService.DataAccess.Repositories;
 using EventManagementService.DTOs;
 using EventManagementService.Exceptions;
-using EventManagementService.Models;
+using EventManagementService.Domain.Entities;
+using EventManagementService.Domain.Enums;
 using EventManagementService.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

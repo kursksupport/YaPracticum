@@ -1,6 +1,6 @@
 ﻿using EventManagementService.DTOs;
-using EventManagementService.Models;
-
+using EventManagementService.Domain.Entities;
+using EventManagementService.Domain.Enums;
 namespace EventManagementService.Services;
 
 public interface IEventService
