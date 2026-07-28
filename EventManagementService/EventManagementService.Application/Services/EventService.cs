@@ -1,10 +1,9 @@
-﻿using EventManagementService.DataAccess.Repositories;
-using EventManagementService.DTOs;
+﻿using EventManagementService.Application.DTOs;
+using EventManagementService.Application.Interfaces;
 using EventManagementService.Domain.Entities;
-using EventManagementService.Domain.Enums;
 
 
-namespace EventManagementService.Services;
+namespace EventManagementService.Application.Services;
 
 public class EventService : IEventService
 {

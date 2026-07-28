@@ -1,9 +1,8 @@
-﻿using EventManagementService.DataAccess.Repositories;
-using EventManagementService.Exceptions;
+﻿using EventManagementService.Application.Interfaces;
 using EventManagementService.Domain.Entities;
-using EventManagementService.Domain.Enums;
+using EventManagementService.Domain.Exceptions;
 
-namespace EventManagementService.Services;
+namespace EventManagementService.Application.Services;
 
 public class BookingService : IBookingService
 {

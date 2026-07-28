@@ -1,7 +1,6 @@
 ﻿using EventManagementService.Domain.Entities;
-using EventManagementService.Domain.Enums;
 
-namespace EventManagementService.DataAccess.Repositories;
+namespace EventManagementService.Application.Interfaces;
 
 public interface IEventRepository
 {

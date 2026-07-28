@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EventManagementService.DTOs;
+namespace EventManagementService.Application.DTOs;
 
 public class CreateEventDto
 {

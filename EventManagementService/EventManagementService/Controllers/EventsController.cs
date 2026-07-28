@@ -1,8 +1,8 @@
-﻿using EventManagementService.DTOs;
-using EventManagementService.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using EventManagementService.Domain.Entities;
-using EventManagementService.Domain.Enums;
+using EventManagementService.Application.Services;
+using EventManagementService.Application.DTOs;
+
 
 namespace EventManagementService.Controllers;
 

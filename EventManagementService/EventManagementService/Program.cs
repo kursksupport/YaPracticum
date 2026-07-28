@@ -1,9 +1,10 @@
 using EventManagementService.BackgroundServices;
 using EventManagementService.Middleware;
-using EventManagementService.Services;
 using EventManagementService.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using EventManagementService.DataAccess.Repositories;
+using EventManagementService.Application.Services;
+using EventManagementService.Application.Interfaces;
 
 namespace EventManagementService
 {

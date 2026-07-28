@@ -1,4 +1,4 @@
-﻿using EventManagementService.Services;
+﻿using EventManagementService.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventManagementService.Controllers;

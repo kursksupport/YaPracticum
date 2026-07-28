@@ -1,7 +1,7 @@
-﻿using EventManagementService.DTOs;
+﻿using EventManagementService.Application.DTOs;
 using EventManagementService.Domain.Entities;
-using EventManagementService.Domain.Enums;
-namespace EventManagementService.Services;
+
+namespace EventManagementService.Application.Services;
 
 public interface IEventService
 {

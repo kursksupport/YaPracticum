@@ -1,4 +1,5 @@
-﻿using EventManagementService.Domain.Entities;
+﻿using EventManagementService.Application.Interfaces;
+using EventManagementService.Domain.Entities;
 using EventManagementService.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,5 +1,5 @@
-﻿using EventManagementService.Domain.Entities;
-using EventManagementService.Domain.Enums;
+﻿using EventManagementService.Application.Interfaces;
+using EventManagementService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventManagementService.DataAccess.Repositories;

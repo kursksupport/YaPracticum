@@ -1,6 +1,5 @@
-﻿using EventManagementService.DataAccess.Repositories;
+﻿using EventManagementService.Application.Interfaces;
 using EventManagementService.Domain.Entities;
-using EventManagementService.Domain.Enums;
 
 namespace EventManagementService.BackgroundServices;
 
