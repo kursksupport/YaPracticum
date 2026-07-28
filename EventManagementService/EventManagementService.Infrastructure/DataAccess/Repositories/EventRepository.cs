@@ -2,7 +2,7 @@
 using EventManagementService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace EventManagementService.DataAccess.Repositories;
+namespace EventManagementService.Infrastructure.DataAccess.Repositories;
 
 public class EventRepository : IEventRepository
 {

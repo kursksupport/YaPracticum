@@ -3,7 +3,7 @@ using EventManagementService.Domain.Entities;
 using EventManagementService.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace EventManagementService.DataAccess.Repositories;
+namespace EventManagementService.Infrastructure.DataAccess.Repositories;
 
 public class BookingRepository : IBookingRepository
 {

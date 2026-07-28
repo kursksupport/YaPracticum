@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿
 using EventManagementService.Domain.Entities;
-using EventManagementService.Domain.Enums;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace EventManagementService.DataAccess.Configurations;
+
+namespace EventManagementService.Infrastructure.DataAccess.Configurations;
 
 public class BookingConfiguration : IEntityTypeConfiguration<Booking>
 {

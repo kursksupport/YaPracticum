@@ -1,8 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using EventManagementService.Domain.Entities;
-using EventManagementService.Domain.Enums;
+﻿using EventManagementService.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
-namespace EventManagementService.DataAccess;
+namespace EventManagementService.Infrastructure.DataAccess;
 
 public sealed class AppDbContext : DbContext
 {
