@@ -3,7 +3,6 @@ using EventManagementService.Domain.Entities;
 using EventManagementService.Application.Services;
 using EventManagementService.Application.DTOs;
 
-
 namespace EventManagementService.Controllers;
 
 [ApiController]
@@ -61,12 +60,8 @@ public class EventsController : ControllerBase
     public async Task<ActionResult<EventInfoDto>> Create(
         CreateEventDto createEventDto)
     {
-        if (createEventDto.EndAt <= createEventDto.StartAt)
-        {
-            return BadRequest("EndAt должна быть позже чем StartAt");
-        }
-
-        var createdEvent = await _eventService.CreateAsync(createEventDto);
+        var createdEvent =
+            await _eventService.CreateAsync(createEventDto);
 
         return CreatedAtAction(
             nameof(GetById),
@@ -79,12 +74,8 @@ public class EventsController : ControllerBase
         Guid id,
         Event updatedEvent)
     {
-        if (updatedEvent.EndAt <= updatedEvent.StartAt)
-        {
-            return BadRequest("EndAt должна быть позже чем StartAt");
-        }
-
-        var updated = await _eventService.UpdateAsync(id, updatedEvent);
+        var updated =
+            await _eventService.UpdateAsync(id, updatedEvent);
 
         if (!updated)
         {
@@ -97,7 +88,8 @@ public class EventsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var deleted = await _eventService.DeleteAsync(id);
+        var deleted =
+            await _eventService.DeleteAsync(id);
 
         if (!deleted)
         {

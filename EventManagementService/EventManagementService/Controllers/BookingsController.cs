@@ -8,7 +8,8 @@ public class BookingsController : ControllerBase
 {
     private readonly IBookingService _bookingService;
 
-    public BookingsController(IBookingService bookingService)
+    public BookingsController(
+        IBookingService bookingService)
     {
         _bookingService = bookingService;
     }
@@ -17,24 +18,19 @@ public class BookingsController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CreateBooking(Guid id)
     {
-        try
-        {
-            var booking = await _bookingService.CreateBookingAsync(id);
+        var booking =
+            await _bookingService.CreateBookingAsync(id);
 
-            return Accepted(
-                $"/bookings/{booking.Id}",
-                booking);
-        }
-        catch (KeyNotFoundException)
-        {
-            return NotFound();
-        }
+        return Accepted(
+            $"/bookings/{booking.Id}",
+            booking);
     }
 
     [HttpGet("bookings/{id:guid}")]
     public async Task<IActionResult> GetBookingById(Guid id)
     {
-        var booking = await _bookingService.GetBookingByIdAsync(id);
+        var booking =
+            await _bookingService.GetBookingByIdAsync(id);
 
         if (booking == null)
         {
@@ -44,4 +40,3 @@ public class BookingsController : ControllerBase
         return Ok(booking);
     }
 }
-
