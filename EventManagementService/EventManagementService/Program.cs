@@ -1,6 +1,6 @@
 using EventManagementService.BackgroundServices;
 using EventManagementService.Middleware;
-using EventManagementService.Application.Services;
+using EventManagementService.Application.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using EventManagementService.Infrastructure.DataAccess;
 using EventManagementService.Infrastructure.DependencyInjection;
@@ -20,8 +20,8 @@ namespace EventManagementService
 
             builder.Services.AddInfrastructure(builder.Configuration);
 
-            builder.Services.AddScoped<IEventService, EventService>();
-            builder.Services.AddScoped<IBookingService, BookingService>();
+            builder.Services.AddApplication();
+            builder.Services.AddInfrastructure(builder.Configuration);
 
             builder.Services.AddHostedService<BookingProcessingService>();
 
