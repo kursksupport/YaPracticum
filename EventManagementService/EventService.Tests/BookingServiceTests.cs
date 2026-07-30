@@ -1,4 +1,4 @@
-﻿using EventManagementService.Exceptions;
+﻿using EventManagementService.Domain.Exceptions;
 using EventManagementService.Domain.Entities;
 using EventManagementService.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
