@@ -1,9 +1,9 @@
 using EventManagementService.BackgroundServices;
 using EventManagementService.Middleware;
-using EventManagementService.Services;
-using EventManagementService.DataAccess;
+using EventManagementService.Application.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using EventManagementService.DataAccess.Repositories;
+using EventManagementService.Infrastructure.DataAccess;
+using EventManagementService.Infrastructure.DependencyInjection;
 
 namespace EventManagementService
 {
@@ -18,15 +18,10 @@ namespace EventManagementService
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddInfrastructure(builder.Configuration);
 
-            builder.Services.AddScoped<IEventService, EventService>();
-            builder.Services.AddScoped<IBookingService, BookingService>();
-              
-            builder.Services.AddScoped<IEventRepository, EventRepository>();
-            builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+            builder.Services.AddApplication();
+            builder.Services.AddInfrastructure(builder.Configuration);
 
             builder.Services.AddHostedService<BookingProcessingService>();
 

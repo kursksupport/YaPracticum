@@ -1,11 +1,13 @@
-﻿using EventManagementService.DataAccess;
-using EventManagementService.DataAccess.Repositories;
-using EventManagementService.DTOs;
-using EventManagementService.Exceptions;
-using EventManagementService.Models;
-using EventManagementService.Services;
+﻿using EventManagementService.Domain.Exceptions;
+using EventManagementService.Domain.Entities;
+using EventManagementService.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using EventManagementService.Application.Interfaces;
+using EventManagementService.Application.Services;
+using EventManagementService.Application.DTOs;
+using EventManagementService.Infrastructure.DataAccess;
+using EventManagementService.Infrastructure.DataAccess.Repositories;
 
 namespace EventManagementService.Tests;
 

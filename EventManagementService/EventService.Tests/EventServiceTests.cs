@@ -1,8 +1,9 @@
-﻿using EventManagementService.DataAccess;
-using EventManagementService.DataAccess.Repositories;
-using EventManagementService.DTOs;
-using EventManagementService.Models;
-using EventManagementService.Services;
+﻿using EventManagementService.Application.DTOs;
+using EventManagementService.Application.Interfaces;
+using EventManagementService.Application.Services;
+using EventManagementService.Domain.Entities;
+using EventManagementService.Infrastructure.DataAccess;
+using EventManagementService.Infrastructure.DataAccess.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
