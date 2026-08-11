@@ -20,7 +20,7 @@ public class BookingService : IBookingService
         _bookingRepository = bookingRepository;
     }
 
-    public async Task<Booking> CreateBookingAsync(Guid eventId)
+    public async Task<Booking> CreateBookingAsync(Guid eventId, Guid userId)
     {
         await _bookingSemaphore.WaitAsync();
 
@@ -40,7 +40,7 @@ public class BookingService : IBookingService
                 throw new NoAvailableSeatsException();
             }
 
-            var booking = Booking.Create(eventId);
+            var booking = Booking.Create(eventId, userId);
 
             await _bookingRepository.AddAsync(booking);
 
@@ -64,18 +64,18 @@ public class BookingService : IBookingService
         return await _bookingRepository.GetPendingAsync();
     }
 
-    public async Task UpdateBookingAsync(Booking booking)
-    {
-        var existingBooking = await _bookingRepository.GetByIdAsync(booking.Id);
+    //public async Task UpdateBookingAsync(Booking booking)
+    //{
+    //    var existingBooking = await _bookingRepository.GetByIdAsync(booking.Id);
 
-        if (existingBooking == null)
-        {
-            throw new KeyNotFoundException("Бронирование не найдено");
-        }
+    //    if (existingBooking == null)
+    //    {
+    //        throw new KeyNotFoundException("Бронирование не найдено");
+    //    }
 
-        existingBooking.Status = booking.Status;
-        existingBooking.ProcessedAt = booking.ProcessedAt;
+    //    existingBooking.Status = booking.Status;
+    //    existingBooking.ProcessedAt = booking.ProcessedAt;
 
-        await _bookingRepository.SaveChangesAsync();
-    }
+    //    await _bookingRepository.SaveChangesAsync();
+    //}
 }
