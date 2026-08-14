@@ -1,4 +1,5 @@
-﻿using EventManagementService.Application.Services;
+﻿using System.Security.Claims;
+using EventManagementService.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventManagementService.Controllers;
@@ -18,8 +19,15 @@ public class BookingsController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CreateBooking(Guid id)
     {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (!Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized();
+        }
+
         var booking =
-            await _bookingService.CreateBookingAsync(id);
+            await _bookingService.CreateBookingAsync(id, userId);
 
         return Accepted(
             $"/bookings/{booking.Id}",
