@@ -40,4 +40,13 @@ public class BookingRepository : IBookingRepository
     {
         await _context.SaveChangesAsync();
     }
+
+    public async Task<int> CountActiveByUserIdAsync(Guid userId)
+    {
+        return await _context.Bookings
+            .CountAsync(b =>
+                b.UserId == userId &&
+                (b.Status == BookingStatus.Pending ||
+                 b.Status == BookingStatus.Confirmed));
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using EventManagementService.Application.Interfaces;
 using EventManagementService.Domain.Entities;
+using EventManagementService.Domain.Enums;
 
 namespace EventManagementService.BackgroundServices;
 
@@ -59,17 +60,25 @@ public class BookingProcessingService : BackgroundService
                 scope.ServiceProvider
                     .GetRequiredService<IBookingRepository>();
 
+            var currentBooking = await bookingRepository.GetByIdAsync(booking.Id);
+
+            if (currentBooking == null ||
+                currentBooking.Status != BookingStatus.Pending)
+            {
+                return;
+            }
+
             var eventRepository =
                 scope.ServiceProvider
                     .GetRequiredService<IEventRepository>();
 
             var eventItem =
                 await eventRepository.GetByIdAsync(
-                    booking.EventId);
+                    currentBooking.EventId);
 
             if (eventItem == null)
             {
-                booking.Reject();
+                currentBooking.Reject();
 
                 await bookingRepository.SaveChangesAsync();
 
@@ -80,7 +89,7 @@ public class BookingProcessingService : BackgroundService
                 return;
             }
 
-            booking.Confirm();
+            currentBooking.Confirm();
 
             await bookingRepository.SaveChangesAsync();
         }

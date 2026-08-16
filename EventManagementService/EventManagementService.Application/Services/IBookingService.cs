@@ -1,15 +1,17 @@
 ﻿using EventManagementService.Domain.Entities;
-using EventManagementService.Domain.Enums;
 
 namespace EventManagementService.Application.Services;
 
 public interface IBookingService
 {
-    Task<Booking> CreateBookingAsync(Guid eventId);
+    Task<Booking> CreateBookingAsync(Guid eventId, Guid userId);
 
     Task<Booking?> GetBookingByIdAsync(Guid bookingId);
 
-    Task<List<Booking>> GetPendingBookingsAsync();
+    Task CancelBookingAsync(
+        Guid bookingId,
+        Guid userId,
+        EventManagementService.Domain.Enums.UserRole userRole);
 
-    Task UpdateBookingAsync(Booking booking);
+    Task<List<Booking>> GetPendingBookingsAsync();
 }

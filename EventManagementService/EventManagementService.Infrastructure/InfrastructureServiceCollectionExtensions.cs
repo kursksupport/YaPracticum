@@ -1,6 +1,7 @@
 ﻿using EventManagementService.Application.Interfaces;
 using EventManagementService.Infrastructure.DataAccess;
 using EventManagementService.Infrastructure.DataAccess.Repositories;
+using EventManagementService.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,13 @@ public static class InfrastructureServiceCollectionExtensions
 
         services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<IBookingRepository, BookingRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+
+        services.Configure<JwtSettings>(
+    configuration.GetSection("Jwt"));
+
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
 
         return services;
     }

@@ -6,7 +6,6 @@ namespace EventManagementService.Application.Services;
 
 public class BookingService : IBookingService
 {
-    
     private static readonly SemaphoreSlim _bookingSemaphore = new(1, 1);
 
     private readonly IEventRepository _eventRepository;
@@ -20,17 +19,35 @@ public class BookingService : IBookingService
         _bookingRepository = bookingRepository;
     }
 
-    public async Task<Booking> CreateBookingAsync(Guid eventId)
+    public async Task<Booking> CreateBookingAsync(
+        Guid eventId,
+        Guid userId)
     {
         await _bookingSemaphore.WaitAsync();
 
         try
         {
-            var eventItem = await _eventRepository.GetByIdAsync(eventId);
+            var eventItem =
+                await _eventRepository.GetByIdAsync(eventId);
 
             if (eventItem == null)
             {
-                throw new KeyNotFoundException("Событие не найдено");
+                throw new KeyNotFoundException(
+                    "Событие не найдено");
+            }
+
+            if (eventItem.StartAt <= DateTime.UtcNow)
+            {
+                throw new PastEventBookingException();
+            }
+
+            var activeBookings =
+                await _bookingRepository
+                    .CountActiveByUserIdAsync(userId);
+
+            if (activeBookings >= 10)
+            {
+                throw new BookingLimitExceededException();
             }
 
             var reserved = eventItem.TryReserveSeats();
@@ -40,7 +57,9 @@ public class BookingService : IBookingService
                 throw new NoAvailableSeatsException();
             }
 
-            var booking = Booking.Create(eventId);
+            var booking = Booking.Create(
+                eventId,
+                userId);
 
             await _bookingRepository.AddAsync(booking);
 
@@ -54,28 +73,51 @@ public class BookingService : IBookingService
         }
     }
 
-    public async Task<Booking?> GetBookingByIdAsync(Guid bookingId)
+    public async Task<Booking?> GetBookingByIdAsync(
+        Guid bookingId)
     {
-        return await _bookingRepository.GetByIdAsync(bookingId);
+        return await _bookingRepository
+            .GetByIdAsync(bookingId);
+    }
+
+    public async Task CancelBookingAsync(
+        Guid bookingId,
+        Guid userId,
+        EventManagementService.Domain.Enums.UserRole userRole)
+    {
+        await _bookingSemaphore.WaitAsync();
+
+        try
+        {
+            var booking = await _bookingRepository.GetByIdAsync(bookingId);
+
+            if (booking == null)
+            {
+                throw new KeyNotFoundException("Бронь не найдена");
+            }
+
+            if (booking.UserId != userId &&
+                userRole != EventManagementService.Domain.Enums.UserRole.Admin)
+            {
+                throw new ForbiddenOperationException();
+            }
+
+            var eventItem = await _eventRepository.GetByIdAsync(booking.EventId);
+
+            booking.Cancel();
+            eventItem?.ReleaseSeats();
+
+            await _bookingRepository.SaveChangesAsync();
+        }
+        finally
+        {
+            _bookingSemaphore.Release();
+        }
     }
 
     public async Task<List<Booking>> GetPendingBookingsAsync()
     {
-        return await _bookingRepository.GetPendingAsync();
-    }
-
-    public async Task UpdateBookingAsync(Booking booking)
-    {
-        var existingBooking = await _bookingRepository.GetByIdAsync(booking.Id);
-
-        if (existingBooking == null)
-        {
-            throw new KeyNotFoundException("Бронирование не найдено");
-        }
-
-        existingBooking.Status = booking.Status;
-        existingBooking.ProcessedAt = booking.ProcessedAt;
-
-        await _bookingRepository.SaveChangesAsync();
+        return await _bookingRepository
+            .GetPendingAsync();
     }
 }

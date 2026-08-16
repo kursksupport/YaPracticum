@@ -10,5 +10,7 @@ public interface IBookingRepository
 
     Task<List<Booking>> GetPendingAsync();
 
+    Task<int> CountActiveByUserIdAsync(Guid userId);
+
     Task SaveChangesAsync();
 }
