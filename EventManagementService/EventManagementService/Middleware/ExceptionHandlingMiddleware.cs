@@ -51,6 +51,18 @@ public class ExceptionHandlingMiddleware
                 StatusCodes.Status409Conflict,
                 "Conflict"),
 
+            BookingLimitExceededException => (
+                StatusCodes.Status409Conflict,
+                "Conflict"),
+
+            PastEventBookingException => (
+                StatusCodes.Status400BadRequest,
+                "Bad Request"),
+
+            ForbiddenOperationException => (
+                StatusCodes.Status403Forbidden,
+                "Forbidden"),
+
             _ => (
                 StatusCodes.Status500InternalServerError,
                 "Internal Server Error")

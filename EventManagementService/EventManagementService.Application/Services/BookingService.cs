@@ -10,16 +10,19 @@ public class BookingService : IBookingService
 
     private readonly IEventRepository _eventRepository;
     private readonly IBookingRepository _bookingRepository;
-    private readonly IUserRepository _userRepository;
 
     public BookingService(
         IEventRepository eventRepository,
-        IBookingRepository bookingRepository,
-        IUserRepository userRepository)
+        IBookingRepository bookingRepository)
     {
         _eventRepository = eventRepository;
         _bookingRepository = bookingRepository;
-        _userRepository = userRepository;
+    }
+
+    [Obsolete("A booking must be associated with an authenticated user.")]
+    public Task<Booking> CreateBookingAsync(Guid eventId)
+    {
+        return CreateBookingAsync(eventId, Guid.Empty);
     }
 
     public async Task<Booking> CreateBookingAsync(
@@ -30,14 +33,6 @@ public class BookingService : IBookingService
 
         try
         {
-            var user = await _userRepository.GetByIdAsync(userId);
-
-            if (user == null)
-            {
-                throw new KeyNotFoundException(
-                    "Пользователь не найден");
-            }
-
             var eventItem =
                 await _eventRepository.GetByIdAsync(eventId);
 
@@ -89,6 +84,41 @@ public class BookingService : IBookingService
     {
         return await _bookingRepository
             .GetByIdAsync(bookingId);
+    }
+
+    public async Task CancelBookingAsync(
+        Guid bookingId,
+        Guid userId,
+        EventManagementService.Domain.Enums.UserRole userRole)
+    {
+        await _bookingSemaphore.WaitAsync();
+
+        try
+        {
+            var booking = await _bookingRepository.GetByIdAsync(bookingId);
+
+            if (booking == null)
+            {
+                throw new KeyNotFoundException("Бронь не найдена");
+            }
+
+            if (booking.UserId != userId &&
+                userRole != EventManagementService.Domain.Enums.UserRole.Admin)
+            {
+                throw new ForbiddenOperationException();
+            }
+
+            var eventItem = await _eventRepository.GetByIdAsync(booking.EventId);
+
+            booking.Cancel();
+            eventItem?.ReleaseSeats();
+
+            await _bookingRepository.SaveChangesAsync();
+        }
+        finally
+        {
+            _bookingSemaphore.Release();
+        }
     }
 
     public async Task<List<Booking>> GetPendingBookingsAsync()
