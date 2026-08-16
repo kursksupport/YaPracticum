@@ -663,6 +663,49 @@ public class BookingServiceTests
         Assert.Equal(anotherUserId, booking.UserId);
     }
 
+    [Fact]
+    public async Task CancelBooking_Should_Throw_When_User_Cancels_Other_User_Booking()
+    {
+        using var provider = CreateServiceProvider();
+        using var scope = provider.CreateScope();
+
+        var eventService = scope.ServiceProvider
+            .GetRequiredService<IEventService>();
+        var bookingService = scope.ServiceProvider
+            .GetRequiredService<IBookingService>();
+
+        var eventItem = await eventService.CreateAsync(CreateTestEvent());
+        var booking = await bookingService.CreateBookingAsync(eventItem.Id, TestUserId);
+
+        await Assert.ThrowsAsync<ForbiddenOperationException>(
+            () => bookingService.CancelBookingAsync(
+                booking.Id,
+                Guid.NewGuid(),
+                UserRole.User));
+    }
+
+    [Fact]
+    public async Task CancelBooking_Should_Allow_Admin_To_Cancel_Other_User_Booking()
+    {
+        using var provider = CreateServiceProvider();
+        using var scope = provider.CreateScope();
+
+        var eventService = scope.ServiceProvider
+            .GetRequiredService<IEventService>();
+        var bookingService = scope.ServiceProvider
+            .GetRequiredService<IBookingService>();
+
+        var eventItem = await eventService.CreateAsync(CreateTestEvent());
+        var booking = await bookingService.CreateBookingAsync(eventItem.Id, TestUserId);
+
+        await bookingService.CancelBookingAsync(
+            booking.Id,
+            Guid.NewGuid(),
+            UserRole.Admin);
+
+        Assert.Equal(BookingStatus.Cancelled, booking.Status);
+    }
+
 
     private static CreateEventDto CreateTestEvent(int totalSeats = 10)
     {
