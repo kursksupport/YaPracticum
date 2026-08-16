@@ -20,7 +20,25 @@ namespace EventManagementService
             builder.Services.AddControllers();
 
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = Microsoft.OpenApi.SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    In = Microsoft.OpenApi.ParameterLocation.Header,
+                    Description = "¬ведите JWT-токен"
+                });
+
+                options.AddSecurityRequirement(document =>
+                    new Microsoft.OpenApi.OpenApiSecurityRequirement
+                    {
+                        [new Microsoft.OpenApi.OpenApiSecuritySchemeReference("Bearer", document)] =
+                            []
+                    });
+            });
 
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
