@@ -2,6 +2,7 @@
 using EventManagementService.Domain.Entities;
 using EventManagementService.Domain.Enums;
 using EventManagementService.Infrastructure.DataAccess.Repositories;
+using EventManagementService.Infrastructure.DataAccess;
 
 namespace EventApi.IntegrationTests;
 
@@ -22,6 +23,7 @@ public class BookingRepositoryTests
         await _fixture.ResetDatabaseAsync();
 
         await using var context = _fixture.CreateContext();
+        var user = await CreateUserAsync(context);
 
         var eventRepository = new EventRepository(context);
         var bookingRepository = new BookingRepository(context);
@@ -36,7 +38,7 @@ public class BookingRepositoryTests
         await eventRepository.AddAsync(eventItem);
         await eventRepository.SaveChangesAsync();
 
-        var booking = Booking.Create(eventItem.Id);
+        var booking = Booking.Create(eventItem.Id, user.Id);
 
         //Act
         await bookingRepository.AddAsync(booking);
@@ -58,6 +60,7 @@ public class BookingRepositoryTests
         await _fixture.ResetDatabaseAsync();
 
         await using var context = _fixture.CreateContext();
+        var user = await CreateUserAsync(context);
         var repository = new BookingRepository(context);
 
         //Act
@@ -74,6 +77,7 @@ public class BookingRepositoryTests
         await _fixture.ResetDatabaseAsync();
 
         await using var context = _fixture.CreateContext();
+        var user = await CreateUserAsync(context);
 
         var eventRepository = new EventRepository(context);
         var bookingRepository = new BookingRepository(context);
@@ -88,12 +92,12 @@ public class BookingRepositoryTests
         await eventRepository.AddAsync(eventItem);
         await eventRepository.SaveChangesAsync();
 
-        var pending = Booking.Create(eventItem.Id);
+        var pending = Booking.Create(eventItem.Id, user.Id);
 
-        var confirmed = Booking.Create(eventItem.Id);
+        var confirmed = Booking.Create(eventItem.Id, user.Id);
         confirmed.Confirm();
 
-        var rejected = Booking.Create(eventItem.Id);
+        var rejected = Booking.Create(eventItem.Id, user.Id);
         rejected.Reject();
 
         await bookingRepository.AddAsync(pending);
@@ -117,6 +121,7 @@ public class BookingRepositoryTests
         await _fixture.ResetDatabaseAsync();
 
         await using var context = _fixture.CreateContext();
+        var user = await CreateUserAsync(context);
 
         var eventRepository = new EventRepository(context);
         var bookingRepository = new BookingRepository(context);
@@ -131,7 +136,7 @@ public class BookingRepositoryTests
         await eventRepository.AddAsync(eventItem);
         await eventRepository.SaveChangesAsync();
 
-        var booking = Booking.Create(eventItem.Id);
+        var booking = Booking.Create(eventItem.Id, user.Id);
 
         await bookingRepository.AddAsync(booking);
         await bookingRepository.SaveChangesAsync();
@@ -152,6 +157,7 @@ public class BookingRepositoryTests
         await _fixture.ResetDatabaseAsync();
 
         await using var context = _fixture.CreateContext();
+        var user = await CreateUserAsync(context);
 
         var eventRepository = new EventRepository(context);
         var bookingRepository = new BookingRepository(context);
@@ -166,7 +172,7 @@ public class BookingRepositoryTests
         await eventRepository.AddAsync(eventItem);
         await eventRepository.SaveChangesAsync();
 
-        var booking = Booking.Create(eventItem.Id);
+        var booking = Booking.Create(eventItem.Id, user.Id);
 
         await bookingRepository.AddAsync(booking);
         await bookingRepository.SaveChangesAsync();
@@ -182,5 +188,17 @@ public class BookingRepositoryTests
         Assert.NotNull(updatedBooking);
         Assert.Equal(BookingStatus.Confirmed, updatedBooking!.Status);
         Assert.NotNull(updatedBooking.ProcessedAt);
+    }
+
+    private static async Task<User> CreateUserAsync(AppDbContext context)
+    {
+        var user = User.Create(
+            $"user-{Guid.NewGuid()}",
+            "password-hash");
+
+        await context.Users.AddAsync(user);
+        await context.SaveChangesAsync();
+
+        return user;
     }
 }

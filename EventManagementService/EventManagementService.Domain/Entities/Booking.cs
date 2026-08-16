@@ -37,12 +37,6 @@ public class Booking
         };
     }
 
-    [Obsolete("A booking must be associated with a user.")]
-    public static Booking Create(Guid eventId)
-    {
-        return Create(eventId, Guid.Empty);
-    }
-
     public void Confirm()
     {
         Status = BookingStatus.Confirmed;

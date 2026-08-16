@@ -2,6 +2,7 @@
 using EventManagementService.Domain.Entities;
 using EventManagementService.Application.Services;
 using EventManagementService.Application.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EventManagementService.Controllers;
 
@@ -57,6 +58,7 @@ public class EventsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<EventInfoDto>> Create(
         CreateEventDto createEventDto)
     {
@@ -70,6 +72,7 @@ public class EventsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(
         Guid id,
         Event updatedEvent)
@@ -86,6 +89,7 @@ public class EventsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var deleted =

@@ -19,12 +19,6 @@ public class BookingService : IBookingService
         _bookingRepository = bookingRepository;
     }
 
-    [Obsolete("A booking must be associated with an authenticated user.")]
-    public Task<Booking> CreateBookingAsync(Guid eventId)
-    {
-        return CreateBookingAsync(eventId, Guid.Empty);
-    }
-
     public async Task<Booking> CreateBookingAsync(
         Guid eventId,
         Guid userId)
