@@ -12,6 +12,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<EventsDbContext>(x => x.UseNpgsql(builder.Configuration.GetConnectionString("EventsDb"))); 
 builder.Services.AddScoped<IEventRepository, EventRepository>(); 
 builder.Services.AddScoped<IEventService, EventService>(); 
+builder.Services.AddHostedService<KafkaTopicInitializer>();
+builder.Services.AddHostedService<BookingConfirmedConsumer>();
 var jwt = builder.Configuration.GetSection("Jwt"); 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x => x.TokenValidationParameters = new() 
                                                                                         { ValidateIssuer = true, 

@@ -1,10 +1,14 @@
 namespace Contracts;
 
-public sealed record BookingConfirmed(Guid BookingId, Guid EventId, Guid UserId, DateTime ConfirmedAt);
+// Public Kafka message contract. Do not add service-internal fields here.
+public sealed record BookingConfirmed(
+    Guid BookingId,
+    Guid EventId,
+    Guid UserId,
+    int SeatsCount,
+    DateTime ConfirmedAt);
 
-public static class RabbitMqNames
+public static class KafkaTopics
 {
-    public const string BookingsExchange = "bookings.exchange";
-    public const string BookingConfirmedRoutingKey = "booking.confirmed";
-    public const string EventsQueue = "events.booking-confirmed";
+    public const string BookingConfirmed = "booking-confirmed";
 }

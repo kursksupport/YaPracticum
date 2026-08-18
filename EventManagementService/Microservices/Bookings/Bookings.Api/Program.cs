@@ -1,4 +1,5 @@
 using System.Text; 
+using Bookings.Api;
 using Bookings.Application; 
 using Bookings.Infrastructure; 
 using Microsoft.AspNetCore.Authentication.JwtBearer; 
@@ -11,7 +12,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(); 
 builder.Services.AddDbContext<BookingsDbContext>(x => x.UseNpgsql(builder.Configuration.GetConnectionString("BookingsDb"))); 
 builder.Services.AddScoped<IBookingRepository, BookingRepository>(); 
+builder.Services.AddSingleton<IBookingConfirmedPublisher, KafkaBookingConfirmedPublisher>();
 builder.Services.AddScoped<IBookingService, BookingService>(); 
+builder.Services.AddHostedService<BookingProcessingService>();
 var jwt = builder.Configuration.GetSection("Jwt"); 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x => x.TokenValidationParameters = new() 
                                                                                         { ValidateIssuer = true, ValidIssuer = jwt["Issuer"], 

@@ -11,4 +11,11 @@ public class Event
     public int AvailableSeats { get; private set; }
     public static Event Create(string title, string? description, DateTime startAt, DateTime endAt, int seats) => new() { Id = Guid.NewGuid(), Title = title, Description = description, StartAt = startAt, EndAt = endAt, TotalSeats = seats, AvailableSeats = seats };
     public void Update(string title, string? description, DateTime startAt, DateTime endAt, int seats) { Title = title; Description = description; StartAt = startAt; EndAt = endAt; AvailableSeats += seats - TotalSeats; TotalSeats = seats; }
+    public bool TryTakeSeats(int seatsCount)
+    {
+        if (seatsCount <= 0 || AvailableSeats < seatsCount) return false;
+
+        AvailableSeats -= seatsCount;
+        return true;
+    }
 }

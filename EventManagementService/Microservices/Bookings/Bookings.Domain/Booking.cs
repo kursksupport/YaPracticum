@@ -9,5 +9,6 @@ public class Booking
     public BookingStatus Status { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public static Booking Create(Guid eventId, Guid userId) => new() { Id = Guid.NewGuid(), EventId = eventId, UserId = userId, Status = BookingStatus.Pending, CreatedAt = DateTime.UtcNow };
+    public void Confirm() { if (Status == BookingStatus.Pending) Status = BookingStatus.Confirmed; }
     public void Cancel() { if (Status == BookingStatus.Cancelled) throw new InvalidOperationException("Бронь уже отменена"); Status = BookingStatus.Cancelled; }
 }
