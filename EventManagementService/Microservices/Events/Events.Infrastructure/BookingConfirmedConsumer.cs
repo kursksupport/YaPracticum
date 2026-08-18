@@ -33,6 +33,8 @@ public sealed class BookingConfirmedConsumer(
         }).Build();
 
         consumer.Subscribe(KafkaTopics.BookingConfirmed);
+        // Consume is blocking. Let the host finish starting before entering the read loop.
+        await Task.Yield();
 
         try
         {

@@ -5,11 +5,32 @@ using Bookings.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer; 
 using Microsoft.EntityFrameworkCore; 
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args); 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 builder.Services.AddControllers(); 
 builder.Services.AddEndpointsApiExplorer(); 
-builder.Services.AddSwaggerGen(); 
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Введите JWT-токен."
+    });
+    options.AddSecurityRequirement(_ => new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecuritySchemeReference("Bearer", null),
+            new List<string>()
+        }
+    });
+}); 
 builder.Services.AddDbContext<BookingsDbContext>(x => x.UseNpgsql(builder.Configuration.GetConnectionString("BookingsDb"))); 
 builder.Services.AddScoped<IBookingRepository, BookingRepository>(); 
 builder.Services.AddSingleton<IBookingConfirmedPublisher, KafkaBookingConfirmedPublisher>();

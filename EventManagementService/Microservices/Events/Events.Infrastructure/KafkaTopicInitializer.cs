@@ -20,7 +20,7 @@ public sealed class KafkaTopicInitializer(
             return;
         }
 
-        using var adminClient = new AdminClientBuilder(new AdminClientConfig
+        var adminClient = new AdminClientBuilder(new AdminClientConfig
         {
             BootstrapServers = bootstrapServers
         }).Build();
@@ -34,7 +34,7 @@ public sealed class KafkaTopicInitializer(
                     NumPartitions = 1,
                     ReplicationFactor = 1
                 }
-            ]);
+            ]).WaitAsync(TimeSpan.FromSeconds(5), cancellationToken);
             logger.LogInformation("Kafka topic {Topic} was created", KafkaTopics.BookingConfirmed);
         }
         catch (CreateTopicsException ex) when (ex.Results.All(x => x.Error.Code == ErrorCode.TopicAlreadyExists))

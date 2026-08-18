@@ -1,6 +1,5 @@
 namespace Contracts;
 
-// Public Kafka message contract. Do not add service-internal fields here.
 public sealed record BookingConfirmed(
     Guid BookingId,
     Guid EventId,
