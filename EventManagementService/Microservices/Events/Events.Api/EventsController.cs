@@ -8,6 +8,7 @@ namespace Events.Api;
 {
     [HttpGet] public Task<List<Event>> GetAll() => service.GetAllAsync();
     [HttpGet("{id:guid}")] public async Task<IActionResult> Get(Guid id) => await service.GetAsync(id) is { } item ? Ok(item) : NotFound();
+    [HttpGet("top")] public Task<List<EventResponse>> GetTop() => service.GetTopAsync();
     [HttpPost, Authorize(Roles = "Admin")] public async Task<IActionResult> Create(EventRequest request) 
     { 
         var item = await service.CreateAsync(request); 
