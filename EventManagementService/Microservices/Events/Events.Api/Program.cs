@@ -31,6 +31,9 @@ builder.Services.AddSwaggerGen(options =>
     });
 }); 
 builder.Services.AddDbContext<EventsDbContext>(x => x.UseNpgsql(builder.Configuration.GetConnectionString("EventsDb"))); 
+var redisConnectionString = builder.Configuration.GetConnectionString("Redis")
+    ?? throw new InvalidOperationException("Connection string 'Redis' is not configured.");
+builder.Services.AddRedis(redisConnectionString);
 builder.Services.AddScoped<IEventRepository, EventRepository>(); 
 builder.Services.AddScoped<IEventService, EventService>(); 
 builder.Services.AddHostedService<KafkaTopicInitializer>();
