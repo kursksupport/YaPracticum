@@ -1,3 +1,4 @@
+using Events.Application;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 
@@ -10,7 +11,12 @@ public static class DependencyInjection
         string connectionString)
     {
         services.AddSingleton<IConnectionMultiplexer>(_ =>
-            ConnectionMultiplexer.Connect(connectionString));
+        {
+            var options = ConfigurationOptions.Parse(connectionString);
+            options.AbortOnConnectFail = false;
+            return ConnectionMultiplexer.Connect(options);
+        });
+        services.AddSingleton<ICacheService, RedisCacheService>();
 
         return services;
     }
