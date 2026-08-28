@@ -14,7 +14,7 @@ public sealed class EventService(
 
     public async Task<EventResponse?> GetAsync(Guid id)
     {
-        var cacheKey = $"event:{id}";
+        var cacheKey = GetEventCacheKey(id);
         var cachedEvent = await cache.GetAsync<EventResponse>(cacheKey);
         if (cachedEvent is not null)
             return cachedEvent;
@@ -41,9 +41,38 @@ public sealed class EventService(
         return response;
     }
 
-    public async Task<Event> CreateAsync(EventRequest r) { var item = Event.Create(r.Title, r.Description, r.StartAt, r.EndAt, r.TotalSeats); await repository.AddAsync(item); await repository.SaveAsync(); return item; }
-    public async Task<bool> UpdateAsync(Guid id, EventRequest r) { var item = await repository.GetAsync(id); if (item is null) return false; item.Update(r.Title, r.Description, r.StartAt, r.EndAt, r.TotalSeats); await repository.SaveAsync(); return true; }
-    public async Task<bool> DeleteAsync(Guid id) { var item = await repository.GetAsync(id); if (item is null) return false; repository.Delete(item); await repository.SaveAsync(); return true; }
+    public async Task<Event> CreateAsync(EventRequest r)
+    {
+        var item = Event.Create(r.Title, r.Description, r.StartAt, r.EndAt, r.TotalSeats);
+        await repository.AddAsync(item);
+        await repository.SaveAsync();
+        return item;
+    }
+
+    public async Task<bool> UpdateAsync(Guid id, EventRequest r)
+    {
+        var item = await repository.GetAsync(id);
+        if (item is null)
+            return false;
+
+        item.Update(r.Title, r.Description, r.StartAt, r.EndAt, r.TotalSeats);
+        await repository.SaveAsync();
+        await cache.RemoveAsync(GetEventCacheKey(id));
+        return true;
+    }
+
+    public async Task<bool> DeleteAsync(Guid id)
+    {
+        var item = await repository.GetAsync(id);
+        if (item is null)
+            return false;
+
+        repository.Delete(item);
+        await repository.SaveAsync();
+        await cache.RemoveAsync(GetEventCacheKey(id));
+        return true;
+    }
+
     public async Task<SeatsDecreaseResult> DecreaseAvailableSeatsAsync(Guid eventId, int seatsCount)
     {
         var item = await repository.GetAsync(eventId);
@@ -51,8 +80,11 @@ public sealed class EventService(
         if (!item.TryTakeSeats(seatsCount)) return SeatsDecreaseResult.NotEnoughSeats;
 
         await repository.SaveAsync();
+        await cache.RemoveAsync(GetEventCacheKey(eventId));
         return SeatsDecreaseResult.Success;
     }
+
+    private static string GetEventCacheKey(Guid id) => $"event:{id}";
 
     private static EventResponse ToResponse(Event item) => new(
         item.Id,
