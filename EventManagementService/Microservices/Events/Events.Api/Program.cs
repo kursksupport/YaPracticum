@@ -31,8 +31,8 @@ builder.Services.AddSwaggerGen(options =>
     });
 }); 
 builder.Services.AddDbContext<EventsDbContext>(x => x.UseNpgsql(builder.Configuration.GetConnectionString("EventsDb"))); 
-var redisConnectionString = builder.Configuration.GetConnectionString("Redis")
-    ?? throw new InvalidOperationException("Connection string 'Redis' is not configured.");
+var redisConnectionString = builder.Configuration["Redis:ConnectionString"]
+    ?? throw new InvalidOperationException("Строка подключения Redis не настроена.");
 builder.Services.AddRedis(redisConnectionString);
 var cacheSettings = builder.Configuration.GetSection("Cache").Get<CacheSettings>() ?? new CacheSettings();
 builder.Services.AddSingleton(cacheSettings);
