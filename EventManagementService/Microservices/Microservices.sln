@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bookings.Api", "Bookings\Bo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "Contracts\Contracts.csproj", "{A278B44E-BC76-49D2-9AB2-1F5B3E260584}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Events.Application.Tests", "Events\Events.Application.Tests\Events.Application.Tests.csproj", "{A4411185-92ED-46FF-86DA-6C8CF321AE07}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,5 +34,9 @@ Global
 		{A278B44E-BC76-49D2-9AB2-1F5B3E260584}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A278B44E-BC76-49D2-9AB2-1F5B3E260584}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A278B44E-BC76-49D2-9AB2-1F5B3E260584}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4411185-92ED-46FF-86DA-6C8CF321AE07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4411185-92ED-46FF-86DA-6C8CF321AE07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4411185-92ED-46FF-86DA-6C8CF321AE07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4411185-92ED-46FF-86DA-6C8CF321AE07}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
