@@ -2,11 +2,18 @@ using Microsoft.EntityFrameworkCore;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Serilog;
+using Serilog.Formatting.Compact;
 using Users.Application;
 using Users.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
+
+builder.Host.UseSerilog((context, loggerConfiguration) =>
+    loggerConfiguration
+        .ReadFrom.Configuration(context.Configuration)
+        .WriteTo.Console(new CompactJsonFormatter()));
 
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource.AddService(serviceName: "users-service"))
@@ -20,8 +27,6 @@ builder.Services.AddOpenTelemetry()
         .AddRuntimeInstrumentation()
         .AddPrometheusExporter());
 
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
 builder.Services.AddControllers(); 
 builder.Services.AddEndpointsApiExplorer(); 
 builder.Services.AddSwaggerGen();
