@@ -16,7 +16,7 @@ builder.Host.UseSerilog((context, loggerConfiguration) =>
         .WriteTo.Console(new CompactJsonFormatter()));
 
 builder.Services.AddOpenTelemetry()
-    .ConfigureResource(resource => resource.AddService(serviceName: "users-service"))
+    .ConfigureResource(resource => resource.AddService(serviceName: configuration["ServiceName"]!))
     .WithTracing(tracing => tracing
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
