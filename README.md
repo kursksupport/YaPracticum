@@ -46,7 +46,7 @@ docker compose up --build
 
 docker-compose up --build
 
-Compose поднимает Zookeeper, Kafka, три PostgreSQL-базы и три API. Миграции EF Core применяются автоматически при старте сервисов.
+Compose поднимает Zookeeper, Kafka, три PostgreSQL-базы, три API, Redis и стек наблюдаемости. Миграции EF Core применяются автоматически при старте сервисов.
 
 Swagger:
 
@@ -55,6 +55,48 @@ Swagger:
 - Bookings: http://localhost:8083/swagger
 
 Kafka этого Docker-набора доступна с хоста по `localhost:9094`. Внутри Docker-сети сервисы используют `kafka:29092`.
+
+Наблюдаемость
+
+Во все три API-сервиса интегрирован OpenTelemetry SDK. Автоматически собираются:
+
+- трейсы входящих ASP.NET Core-запросов, исходящих HTTP-запросов и запросов Entity Framework Core;
+- метрики ASP.NET Core, включая latency, throughput, error rate и количество активных запросов;
+- метрики рантайма .NET, включая GC, память, CPU, JIT и thread pool.
+
+Трейсы экспортируются по OTLP gRPC в Jaeger. Метрики каждого сервиса публикуются в формате Prometheus на эндпоинте `/metrics`. Логи выводятся через Serilog в компактном JSON-формате, по одному JSON-объекту на строку.
+
+В стек наблюдаемости входят:
+
+- Prometheus — хранение и запрос метрик;
+- Jaeger — хранение и просмотр распределённых трейсов;
+- Grafana — визуализация latency, throughput, active requests и error rate;
+- OpenTelemetry — сбор и экспорт телеметрии из сервисов;
+- Serilog — структурированные JSON-логи.
+
+Порты и адреса:
+
+- Prometheus UI и Targets: http://localhost:9090, http://localhost:9090/targets
+- Jaeger UI: http://localhost:16686
+- Jaeger OTLP gRPC endpoint: `http://localhost:4317`
+- Grafana UI: http://localhost:3000
+- Users metrics: http://localhost:8081/metrics
+- Events metrics: http://localhost:8082/metrics
+- Bookings metrics: http://localhost:8083/metrics
+
+Запуск всего приложения вместе со стеком мониторинга:
+
+cd EventManagementService/Microservices
+docker compose up --build -d
+
+Проверить состояние контейнеров:
+
+docker compose ps
+
+Prometheus использует конфигурацию `EventManagementService/Microservices/prometheus.yml` и скрейпит все три API каждые 15 секунд. На странице Prometheus Targets сервисы `users-service`, `events-service` и `bookings-service` должны иметь статус `UP`.
+
+Для первого входа в Grafana используйте логин `admin` и пароль `admin`. В новой Grafana добавьте источник данных типа Prometheus с адресом `http://prometheus:9090`, затем импортируйте дашборд из файла `EventManagementService/Microservices/grafana-dashboard.json`. Дашборд `Event API Observability` содержит панели latency p50/p95/p99, throughput, active requests и HTTP error rate для всех трёх сервисов.
+
 
 Остановка контейнеров:
 
