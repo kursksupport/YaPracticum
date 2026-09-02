@@ -89,9 +89,14 @@ services:
       Jwt__Secret: your-super-secret-key-for-jwt-token
       Jwt__Issuer: EventManagementService
       Jwt__Audience: EventManagementService
+      Otlp__Endpoint: http://jaeger:4317
     depends_on:
       users-db:
         condition: service_healthy
+    networks:
+      default:
+        aliases:
+          - users-service
 
   events-api:
     build:
@@ -107,6 +112,7 @@ services:
       Jwt__Secret: your-super-secret-key-for-jwt-token
       Jwt__Issuer: EventManagementService
       Jwt__Audience: EventManagementService
+      Otlp__Endpoint: http://jaeger:4317
     depends_on:
       events-db:
         condition: service_healthy
@@ -114,6 +120,10 @@ services:
         condition: service_healthy
       kafka:
         condition: service_healthy
+    networks:
+      default:
+        aliases:
+          - events-service
 
   bookings-api:
     build:
@@ -127,13 +137,46 @@ services:
       Jwt__Secret: your-super-secret-key-for-jwt-token
       Jwt__Issuer: EventManagementService
       Jwt__Audience: EventManagementService
+      Otlp__Endpoint: http://jaeger:4317
     depends_on:
       bookings-db:
         condition: service_healthy
       kafka:
         condition: service_healthy
+    networks:
+      default:
+        aliases:
+          - bookings-service
+
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: eventapi-prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.56
+    container_name: eventapi-jaeger
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+
+  grafana:
+    image: grafana/grafana:10.4.2
+    container_name: eventapi-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana-data:/var/lib/grafana
 
 volumes:
   users-db-data:
   events-db-data:
   bookings-db-data:
+  grafana-data:
